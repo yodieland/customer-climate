@@ -1,0 +1,61 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #4552de;
+  position: relative;
+}
+
+header {
+  /* background-color: #333; */
+  color: #fff;
+  /* padding: 10px 0; */
+  text-align: center;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+nav ul li {
+  margin: 0 15px;
+}
+
+nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+main {
+  padding: 20px;
+  text-align: center;
+  /* background-color: #4552de; */
+}
+
+footer {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 1px 0; /* Reduce padding to make the footer thinner */
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
+}
+#text{
+  font-size: 25px
+}
+
+#myChart{
+
+  padding-top: 20px;
+}
+#title{
+  padding-top: 3px;
+  margin-bottom: 10px;
+}
