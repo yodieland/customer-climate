@@ -44,4 +44,3 @@ document.getElementById("airQualityForm").addEventListener("submit", function(ev
     const zipCode = document.getElementById("zipCode").value;
     getAirQuality(zipCode); // Call the function with the ZIP code
   });
-    
