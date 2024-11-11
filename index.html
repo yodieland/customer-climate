@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap and Google Fonts -->
+    <link href="css/font-awesome.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <title>CityCites - Welcome</title>
+
+    <style>
+    /* General styling for body and typography */
+body {
+  font-family: 'Lato', sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+h2 {
+  border-bottom: 2px solid #ff9636;
+  padding-bottom: 10px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 0 15px;
+}
+
+.product-container {
+  margin-top: 50px;
+}
+
+.product-card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+  border-radius: 10px;
+  background-color: #fff;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.product-card:hover {
+  transform: scale(1.05);
+}
+
+.product-image {
+  border-bottom: 2px solid #ff9636;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  color: #34495e;
+  margin-bottom: 15px;
+}
+
+.card-text {
+  color: #7f8c8d;
+}
+
+.btn-primary {
+  background-color: #ff9636;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #e67e22;
+}
+
+/* Navbar */
+.custom-navbar {
+  background-color: #2c3e50;
+  padding: 15px 0;
+}
+
+.nav-link, .navbar-brand {
+  color: #ecf0f1 !important;
+  font-weight: 600;
+}
+
+.nav-link:hover {
+  color: #ff9636 !important;
+}
+
+.dropdown-menu {
+  background-color: #fff;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.dropdown-item {
+  color: #2c3e50;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+  padding: 15px;
+  text-align: left;
+}
+
+th {
+  background-color: #ff9636;
+  color: white;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+td {
+  color: #34495e;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+tr:hover {
+  background-color: #f1c40f;
+  color: #2c3e50;
+}
+
+#csvTable th, #comparisonTable th, #cityTrendTable th {
+  background-color: #ff9636;
+  color: white;
+  padding: 10px;
+}
+
+#csvTable td, #comparisonTable td, #cityTrendTable td {
+  padding: 10px;
+  color: #2c3e50;
+}
+
+/* Footer */
+footer {
+  background-color: #2c3e50;
+  color: white;
+  text-align: center;
+  padding: 15px 0;
+  position: relative;
+  width: 100%;
+  bottom: 0;
+}
+
+footer p {
+  margin: 0;
+}
+
+/* Input and Dropdown Styling */
+.form-control {
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+
+label {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Button Styling */
+#learnMoreBtn, #compareBtn {
+  background-color: #ff9636;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#learnMoreBtn:hover, #compareBtn:hover {
+  background-color: #e67e22;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .product-card {
+    margin-bottom: 20px;
+  }
+
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  th, td {
+    padding: 8px;
+  }
+}
+.product-container h2 {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+a.btn {
+  background-color: #ff9636;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a.btn:hover {
+  background-color: #e67e22;
+}
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg custom-navbar">
+  <div class="container">
+      <a class="navbar-brand" href="index.html">Welcome</a>
+      <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+<li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+<li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+
+<!-- Dropdown for Offerings -->
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" href="products.html" id="offeringsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+  Offerings
+</a>
+<ul class="dropdown-menu" aria-labelledby="offeringsDropdown">
+  <li><a class="dropdown-item" href="#comparisonTable">Basic</a></li>
+  <li><a class="dropdown-item" href="#premium">Premium</a></li>
+  <li><a class="dropdown-item" href="#customreport">Custom</a></li>
+</ul>
+</li>
+</ul>
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item ms-4"><a class="nav-link" href="login.html">Login</a></li>
+        <li class="nav-item ms-4"><a class="nav-link" href="signup.html">Sign Up</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Banner Section -->
+<div class="container-fluid gtco-banner-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1>We strive to bring meaningful data and <span>metrics</span> for your business.</h1>
+                <p>CityCites provides city-specific data analytics tailored to your business needs. Explore our platform for key city metrics.</p>
+                <a href="about.html" id="learnMoreBtn">Learn More</a>
+            </div>
+            <div class="col-md-6">
+                <div class="card"><img class="card-img-top img-fluid" src="images/banner-img.png" alt="City Data"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Services Section -->
+<div class="container-fluid gtco-feature" id="services">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5">
+                <h2>Meaningful metrics at your fingertips</h2>
+                <p>This platform will offer metrics in an easy to understand
+and usable format that are important to business
+operations related to the city. Businesses & end consumers
+will also be able to interactively obtain pertinent city data at
+granular levels and compare cities by various
+categories.</p>
+                <a href="products.html" id = 'learnMoreBtn'>Learn More</a>
+            </div>
+            <div class="col-md-7">
+                <img src="images/learn-img.jpg" class="img-fluid" alt="Learn Image">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Metrics Section -->
+<section class="metrics-section">
+    <h2 style="text-align: center;">Key City Metrics</h2>
+    <div class="container" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div class="row" style="display: flex; justify-content: center;">
+            <div class="col-md-6 metric" style="text-align: center;">
+                <h3>Social</h3>
+                <p>Data on population growth, unemployment rates, and poverty levels.</p>
+            </div>
+            <div class="col-md-6 metric" style="text-align: center;">
+                <h3>Economic</h3>
+                <p>Labor force distribution, business growth, and income data.</p>
+            </div>
+        </div>
+        <div class="row" style="display: flex; justify-content: center;">
+            <div class="col-md-6 metric" style="text-align: center;">
+                <h3>Political</h3>
+                <p>Key political factors, governance structures, and civic engagement.</p>
+            </div>
+            <div class="col-md-6 metric" style="text-align: center;">
+                <h3>Environmental</h3>
+                <p>Environmental impact, green policies, and sustainability efforts.</p>
+            </div>
+        </div>
+        <div class="row" style="display: flex; justify-content: center;">
+            <div class="col-md-6 metric" style="text-align: center;">
+                <h3>Housing</h3>
+                <p>Home ownership, rental vacancy rates, and housing affordability.</p>
+            </div>
+            <div class="col-md-6 metric" style="text-align: center;">
+                <h3>Health & Education</h3>
+                <p>Health insurance coverage, education levels, and graduation rates.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2024 CityCites. All rights reserved.</p>
+</footer>
+
+<!-- Optional JavaScript -->
+<script src="js/jquery-3.3.1.slim.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+</body>
+</html>
