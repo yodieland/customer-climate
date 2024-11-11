@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CityCites - Products and Data</title>
+
+    <!-- Include Bootstrap for styling -->
+    <!-- jQuery CDN -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <!-- PapaParse CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+    <!-- Include PapaParse for CSV parsing and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <style>
+    /* General styling for body and typography */
+body {
+  font-family: 'Lato', sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+h2 {
+  border-bottom: 2px solid #ff9636;
+  padding-bottom: 10px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 0 15px;
+}
+
+.product-container {
+  margin-top: 50px;
+}
+
+.product-card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+  border-radius: 10px;
+  background-color: #fff;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.product-card:hover {
+  transform: scale(1.05);
+}
+
+.product-image {
+  border-bottom: 2px solid #ff9636;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  color: #34495e;
+  margin-bottom: 15px;
+}
+
+.card-text {
+  color: #7f8c8d;
+}
+
+.btn-primary {
+  background-color: #ff9636;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #e67e22;
+}
+
+/* Navbar */
+.custom-navbar {
+  background-color: #2c3e50;
+  padding: 15px 0;
+}
+
+.nav-link, .navbar-brand {
+  color: #ecf0f1 !important;
+  font-weight: 600;
+}
+
+.nav-link:hover {
+  color: #ff9636 !important;
+}
+
+.dropdown-menu {
+  background-color: #fff;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.dropdown-item {
+  color: #2c3e50;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+  padding: 15px;
+  text-align: left;
+}
+
+th {
+  background-color: #ff9636;
+  color: white;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+td {
+  color: #34495e;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+tr:hover {
+  background-color: #f1c40f;
+  color: #2c3e50;
+}
+
+#csvTable th, #comparisonTable th, #cityTrendTable th {
+  background-color: #ff9636;
+  color: white;
+  padding: 10px;
+}
+
+#csvTable td, #comparisonTable td, #cityTrendTable td {
+  padding: 10px;
+  color: #2c3e50;
+}
+
+/* Footer */
+footer {
+  background-color: #2c3e50;
+  color: white;
+  text-align: center;
+  padding: 15px 0;
+  position: relative;
+  width: 100%;
+  bottom: 0;
+}
+
+footer p {
+  margin: 0;
+}
+
+/* Input and Dropdown Styling */
+.form-control {
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+
+label {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Button Styling */
+#learnMoreBtn, #compareBtn {
+  background-color: #ff9636;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#learnMoreBtn:hover, #compareBtn:hover {
+  background-color: #e67e22;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .product-card {
+    margin-bottom: 20px;
+  }
+
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  th, td {
+    padding: 8px;
+  }
+}
+.product-container h2 {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+a.btn {
+  background-color: #ff9636;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a.btn:hover {
+  background-color: #e67e22;
+}
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg custom-navbar">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">Welcome</a>
+        <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav mr-auto">
+<li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+<li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+
+<!-- Dropdown for Offerings -->
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" href="products.html" id="offeringsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Offerings
+  </a>
+  <ul class="dropdown-menu" aria-labelledby="offeringsDropdown">
+    <li><a class="dropdown-item" href="#comparisonTable">Basic</a></li>
+    <li><a class="dropdown-item" href="#premium">Premium</a></li>
+    <li><a class="dropdown-item" href="#customreport">Custom</a></li>
+  </ul>
+</li>
+</ul>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item ms-4"><a class="nav-link" href="login.html">Login</a></li>
+          <li class="nav-item ms-4"><a class="nav-link" href="signup.html">Sign Up</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Product Section -->
+  <div class="container product-container">
+    <h1 class="text-center">Our Products</h1>
+    <div class="row">
+      <!-- Product 1 -->
+      <div class="col-md-4 product-card">
+        <div class="card">
+          <img src="choong-deng-xiang--WXQm_NTK0U-unsplash.jpg" alt="Product 1" class="product-image">
+          <div class="card-body">
+            <h5 class="card-title">City Data Metrics</h5>
+            <p class="card-text">Relevant data insights for your city via metrics. Comparison trends with other cities, advanced analytics and reports upon request.</p>
+            <a href="#" id="learnMoreBtn" class="btn btn-primary">Learn More</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 2 -->
+      <div class="col-md-4 product-card">
+        <div class="card">
+          <img src="towfiqu-barbhuiya-nApaSgkzaxg-unsplash.jpg" alt="Product 2" class="product-image">
+          <div class="card-body">
+            <h5 class="card-title">CityCites Score</h5>
+            <p class="card-text">Get an instant snapshot of your city. Proprietary algorithms compute scores using 1000's of metrics with our CityCites Score© system.</p>
+            <a href="#" id="learnMoreBtn" class="btn btn-primary">Learn More</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 3 -->
+      <div class="col-md-4 product-card">
+        <div class="card">
+          <img src="campaign-creators-pypeCEaJeZY-unsplash.jpg" alt="Product 3" class="product-image">
+          <div class="card-body">
+            <h5 class="card-title">Market Forecast Tool</h5>
+            <p class="card-text">Predict city metric trends with our AI-driven forecasting tools.</p>
+            <a href="#" id="learnMoreBtn" class="btn btn-primary">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h1>Check Air Quality</h1>
+    <form id="airQualityForm">
+        <label for="zipCode">Enter your ZIP code:</label>
+        <input type="text" id="zipCode" name="zipCode" required>
+        <button type="submit">Check Air Quality</button>
+    </form>
+    <div id="result"></div>
+
+    <script src="app.js"></script>
+
+  <div class="container">
+   <h2>City Demographics and Economic Data</h2>
+   <div class="category-select">
+        <label><input type="checkbox" class="category-filter" value="Social"> Social</label>
+        <label><input type="checkbox" class="category-filter" value="Economic"> Economic</label>
+        <label><input type="checkbox" class="category-filter" value="Political"> Political</label>
+        <label><input type="checkbox" class="category-filter" value="Environmental"> Environmental</label>
+    </div>
+   <!-- Dropdown to select Year and then City -->
+   <label for="yearCityDropdown">Select Year:</label>
+   <select id="yearCityDropdown" class="form-control mb-3">
+     <option value="">Select Year</option>
+     <option value="2018">2018</option>
+     <option value="2019">2019</option>
+     <option value="2021">2021</option>
+     <option value="2022">2022</option>
+   </select>
+
+   <label for="cityForYearDropdown">Select City:</label>
+   <select id="cityForYearDropdown" class="form-control mb-3" disabled>
+     <option value="">Select City</option>
+     <!-- Options will be dynamically populated after selecting year -->
+   </select>
+
+   <!-- Table to display the city data for the selected year -->
+   <table id="cityDataForYearTable" class="table table-bordered table-striped">
+     <thead id="cityDataForYearHeader"></thead>
+     <tbody id="cityDataForYearBody"></tbody>
+   </table>
+ </div>
+
+     <!-- Search and Compare Cities -->
+   <div class="container">
+     <h2>Compare Two Cities</h2>
+     <label for="csvDropdown">Select Data Year:</label>
+     <select id="csvDropdown" class="form-control mb-3">
+       <option value="https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202018.csv">Metrics Table - 2018</option>
+       <option value="https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202019.csv">Metrics Table - 2019</option>
+       <option value="https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202021.csv">Metrics Table - 2021</option>
+       <option value="https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202022.csv">Metrics Table - 2022</option>
+     </select>
+
+     <!-- Dropdowns to select cities -->
+     <div class="row mb-3">
+       <div class="col-md-6">
+         <label for="city1Dropdown">Select First City:</label>
+         <select id="city1Dropdown" class="form-control">
+           <option value="">Select City 1</option>
+           <!-- Options will be populated dynamically -->
+         </select>
+       </div>
+       <div class="col-md-6">
+         <label for="city2Dropdown">Select Second City:</label>
+         <select id="city2Dropdown" class="form-control">
+           <option value="">Select City 2</option>
+           <!-- Options will be populated dynamically -->
+         </select>
+       </div>
+     </div>
+
+     <!-- Comparison Table -->
+     <table id="comparisonTable" class="table table-bordered table-striped">
+       <thead id="comparisonTableHeader"></thead>
+       <tbody id="comparisonTableBody"></tbody>
+     </table>
+   </div>
+
+   <!-- City Metrics Trend Section -->
+<div class="container">
+  <h2>City Metrics Trend</h2>
+
+  <!-- Dropdown to select a city -->
+  <label for="cityTrendDropdown">Select a City:</label>
+  <select id="cityTrendDropdown" class="form-control mb-3">
+    <option value="">Select City</option>
+    <!-- Options will be dynamically populated -->
+  </select>
+
+  <!-- Table to display the metrics trend across all years -->
+  <table id="cityTrendTable" class="table table-bordered table-striped">
+    <thead id="cityTrendTableHeader"></thead>
+    <tbody id="cityTrendTableBody"></tbody>
+  </table>
+</div>
+
+<div class="container product-container mt-5">
+  <h2 id= "customreport">Custom Reports</h2>
+  <p>View the latest custom report below:</p>
+
+  <!-- Embedded PDF to display the full report -->
+  <div class="embed-responsive" style="height: 600px;">
+    <embed src="E:\solution\solution\products report.pdf" type="application/pdf" width="100%" height="600px" />
+  </div>
+</div>
+    <!-- Dropdown to select CSV -->
+
+    <!-- Table to display the data -->
+    <!-- <table id="csvTable" class="table table-bordered table-striped">
+      <thead id="tableHeader"></thead>
+      <tbody id="tableBody"></tbody>
+    </table> -->
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      let allData = {}; // Store data for all years
+      const csvUrls = {
+        "2018": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202018.csv",
+        "2019": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202019.csv",
+        "2021": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202021.csv",
+        "2022": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202022.csvmain/metrics%20table%20-%202022.csv"
+      };
+
+      // Load data from all CSVs
+      function loadAllCSVs() {
+        const promises = [];
+        Object.keys(csvUrls).forEach(year => {
+          promises.push(new Promise((resolve, reject) => {
+            Papa.parse(csvUrls[year], {
+              download: true,
+              header: true,
+              complete: function(results) {
+                allData[year] = results.data;
+                resolve();
+              },
+              error: function(error) {
+                console.log("Failed to load CSV: ", error);
+                reject();
+              }
+            });
+          }));
+        });
+
+        // Once all CSVs are loaded
+        Promise.all(promises).then(() => {
+          $('#cityForYearDropdown').prop('disabled', true);
+        });
+      }
+      $('.category-filter').on('change', function() {
+       const selectedCategories = $('.category-filter:checked').map(function() {
+           return this.value;
+       }).get();
+       displayDataByCategory(selectedCategories);
+   });
+   function displayDataByCategory(selectedCategories) {
+      // Clear existing content in all tables
+      clearTables();
+
+      selectedCategories.forEach(category => {
+          const categoryData = Object.values(allData).flat().filter(row => row.CATEGORY === category);
+          buildTable(categoryData, `#${category.toLowerCase()}TableHeader`, `#${category.toLowerCase()}TableBody`);
+      });
+  }
+  function clearTables() {
+      $('#socialTableHeader, #socialTableBody, #economicTableHeader, #economicTableBody, #politicalTableHeader, #politicalTableBody, #environmentalTableHeader, #environmentalTableBody').empty();
+  }
+
+      // Event listener for year selection
+      $('#yearCityDropdown').on('change', function() {
+        const selectedYear = $(this).val();
+        if (selectedYear) {
+          populateCityDropdownForYear(selectedYear);
+        } else {
+          $('#cityForYearDropdown').prop('disabled', true);
+          $('#cityForYearDropdown').empty().append('<option value="">Select City</option>');
+          $('#cityDataForYearTable').hide();
+        }
+      });
+
+      // Populate city dropdown after selecting year
+      function populateCityDropdownForYear(year) {
+        const cityForYearDropdown = $('#cityForYearDropdown');
+        cityForYearDropdown.empty().append('<option value="">Select City</option>');
+
+        const cities = new Set();
+        allData[year].forEach(row => {
+          cities.add(row.CITY);
+        });
+
+        cities.forEach(city => {
+          cityForYearDropdown.append(`<option value="${city}">${city}</option>`);
+        });
+
+        cityForYearDropdown.prop('disabled', false);
+      }
+
+      // Event listener for city selection for the selected year
+      $('#cityForYearDropdown').on('change', function() {
+        const selectedCity = $(this).val();
+        const selectedYear = $('#yearCityDropdown').val();
+        if (selectedCity && selectedYear) {
+          showCityDataForYear(selectedCity, selectedYear);
+        }
+      });
+
+      // Display city data for the selected year
+      function showCityDataForYear(cityName, year) {
+        const cityDataForYearHeader = $('#cityDataForYearHeader');
+        const cityDataForYearBody = $('#cityDataForYearBody');
+
+        // Clear existing content
+        cityDataForYearHeader.empty();
+        cityDataForYearBody.empty();
+
+        const cityYearData = allData[year].find(row => row.CITY === cityName);
+
+        if (cityYearData) {
+          // Create header row
+          const headers = Object.keys(cityYearData);
+          const headerRow = $('<tr></tr>');
+          headers.forEach(header => {
+            headerRow.append(`<th>${header}</th>`);
+          });
+          cityDataForYearHeader.append(headerRow);
+
+          // Create data row for city
+          const dataRow = $('<tr></tr>');
+          headers.forEach(header => {
+            dataRow.append(`<td>${cityYearData[header] || 'N/A'}</td>`);
+          });
+          cityDataForYearBody.append(dataRow);
+        } else {
+          cityDataForYearBody.append('<tr><td colspan="100%">No data available for this city in the selected year.</td></tr>');
+        }
+      }
+
+      // Load all the CSVs and initialize the page
+      loadAllCSVs();
+    });
+    </script>
+  <script>
+  $(document).ready(function() {
+    let originalData = [];  // This will store the original data
+
+    // Load the initial CSV
+    loadCSV($('#csvDropdown').val());
+
+    // Event listener for dropdown change
+    $('#csvDropdown').on('change', function() {
+      const selectedCSV = $(this).val();
+      loadCSV(selectedCSV);
+    });
+
+    // Event listener for the search input field
+    $('#searchInput').on('keyup', function() {
+    const searchValue = $(this).val().toLowerCase();
+
+    // Filter the data by checking if the city name starts with the search input
+    const filteredData = originalData.filter(row =>
+      row.CITY && row.CITY.toLowerCase().startsWith(searchValue)
+    );
+
+    // Rebuild the table with the filtered data
+    buildTable(filteredData);
+  });
+     $('#city1Dropdown, #city2Dropdown').on('change', function() {
+    compareCities();
+  });
+    // Function to load and display CSV
+    function loadCSV(csvUrl) {
+      Papa.parse(csvUrl, {
+        download: true,
+        header: true,
+        complete: function(results) {
+          originalData = results.data;  // Save the original data
+           populateCityDropdowns(originalData);
+          buildTable(originalData);  // Build the table with original data
+        },
+        error: function(error) {
+        console.log("Failed to load CSV: ", error);
+      }
+      });
+    }
+
+    // Function to populate city dropdowns
+   function populateCityDropdowns(data) {
+     const city1Dropdown = $('#city1Dropdown');
+     const city2Dropdown = $('#city2Dropdown');
+     city1Dropdown.empty();
+     city2Dropdown.empty();
+
+     city1Dropdown.append('<option value="">Select City 1</option>');
+     city2Dropdown.append('<option value="">Select City 2</option>');
+
+     data.forEach(row => {
+       city1Dropdown.append(`<option value="${row.CITY}">${row.CITY}</option>`);
+       city2Dropdown.append(`<option value="${row.CITY}">${row.CITY}</option>`);
+     });
+   }
+
+   // Function to compare selected cities
+   function compareCities() {
+     const city1 = $('#city1Dropdown').val();
+     const city2 = $('#city2Dropdown').val();
+     const city1Data = originalData.find(row => row.CITY === city1);
+     const city2Data = originalData.find(row => row.CITY === city2);
+
+     buildComparisonTable(city1Data, city2Data);
+   }
+
+   // Function to build comparison table
+   function buildComparisonTable(city1Data, city2Data) {
+     const comparisonTableHeader = $('#comparisonTableHeader');
+     const comparisonTableBody = $('#comparisonTableBody');
+
+     // Clear existing content
+     comparisonTableHeader.empty();
+     comparisonTableBody.empty();
+
+     // Ensure both cities are selected
+     if (!city1Data || !city2Data) {
+       return;
+     }
+
+     // Create header row
+     const headers = Object.keys(city1Data);
+     const headerRow = $('<tr></tr>');
+     headerRow.append('<th>Metrics</th>');
+     headerRow.append(`<th>${city1Data.CITY}</th>`);
+     headerRow.append(`<th>${city2Data.CITY}</th>`);
+     comparisonTableHeader.append(headerRow);
+
+     // Create data rows for comparison
+     headers.forEach(header => {
+       const rowElement = $('<tr></tr>');
+       rowElement.append(`<td>${header}</td>`);
+       rowElement.append(`<td>${city1Data[header] || 'N/A'}</td>`);
+       rowElement.append(`<td>${city2Data[header] || 'N/A'}</td>`);
+       comparisonTableBody.append(rowElement);
+     });
+   }
+
+    // Function to build table with CSV data
+    function buildTable(data) {
+      const tableHeader = document.getElementById('tableHeader');
+      const tableBody = document.getElementById('tableBody');
+
+      // Clear existing content
+      tableHeader.innerHTML = '';
+      tableBody.innerHTML = '';
+
+      if (data.length > 0) {
+        // Create header row
+        const headers = Object.keys(data[0]);
+        const headerRow = document.createElement('tr');
+        headers.forEach(header => {
+          const th = document.createElement('th');
+          th.textContent = header;
+          headerRow.appendChild(th);
+        });
+        tableHeader.appendChild(headerRow);
+
+        // Create data rows
+        data.forEach(row => {
+          const rowElement = document.createElement('tr');
+          headers.forEach(header => {
+            const td = document.createElement('td');
+            td.textContent = row[header];
+            rowElement.appendChild(td);
+          });
+          tableBody.appendChild(rowElement);
+        });
+      }
+    }
+  });
+</script>
+<script>
+  $(document).ready(function() {
+    let allData = {}; // Store data for all years
+    const csvUrls = {
+      "2018": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202018.csv",
+      "2019": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202019.csv",
+      "2021": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202021.csv",
+      "2022": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202022.csv"
+    };
+
+    // Load data from all CSVs
+    function loadAllCSVs() {
+      const promises = [];
+      Object.keys(csvUrls).forEach(year => {
+        promises.push(new Promise((resolve, reject) => {
+          Papa.parse(csvUrls[year], {
+            download: true,
+            header: true,
+            complete: function(results) {
+              allData[year] = results.data;
+              resolve();
+            },
+            error: function(error) {
+              console.log("Failed to load CSV: ", error);
+              reject();
+            }
+          });
+        }));
+      });
+
+      // Once all CSVs are loaded, populate the dropdown
+      Promise.all(promises).then(() => {
+        populateCityTrendDropdown();
+      });
+    }
+    $('#city1Dropdown, #city2Dropdown').on('change', function() {
+   compareCities();
+   });
+   // Function to load and display CSV
+   function loadCSV(csvUrl) {
+     Papa.parse(csvUrl, {
+       download: true,
+       header: true,
+       complete: function(results) {
+         originalData = results.data;  // Save the original data
+          populateCityDropdowns(originalData);
+         buildTable(originalData);  // Build the table with original data
+       },
+       error: function(error) {
+       console.log("Failed to load CSV: ", error);
+     }
+     });
+   }
+
+   // Function to populate city dropdowns
+   function populateCityDropdowns(data) {
+    const city1Dropdown = $('#city1Dropdown');
+    const city2Dropdown = $('#city2Dropdown');
+    city1Dropdown.empty();
+    city2Dropdown.empty();
+
+    city1Dropdown.append('<option value="">Select City 1</option>');
+    city2Dropdown.append('<option value="">Select City 2</option>');
+
+    data.forEach(row => {
+      city1Dropdown.append(`<option value="${row.CITY}">${row.CITY}</option>`);
+      city2Dropdown.append(`<option value="${row.CITY}">${row.CITY}</option>`);
+    });
+   }
+
+   // Function to compare selected cities
+   function compareCities() {
+    const city1 = $('#city1Dropdown').val();
+    const city2 = $('#city2Dropdown').val();
+    const city1Data = originalData.find(row => row.CITY === city1);
+    const city2Data = originalData.find(row => row.CITY === city2);
+
+    buildComparisonTable(city1Data, city2Data);
+   }
+
+   // Function to build comparison table
+   function buildComparisonTable(city1Data, city2Data) {
+    const comparisonTableHeader = $('#comparisonTableHeader');
+    const comparisonTableBody = $('#comparisonTableBody');
+
+    // Clear existing content
+    comparisonTableHeader.empty();
+    comparisonTableBody.empty();
+
+    // Ensure both cities are selected
+    if (!city1Data || !city2Data) {
+      return;
+    }
+
+    // Create header row
+    const headers = Object.keys(city1Data);
+    const headerRow = $('<tr></tr>');
+    headerRow.append('<th>Metrics</th>');
+    headerRow.append(`<th>${city1Data.CITY}</th>`);
+    headerRow.append(`<th>${city2Data.CITY}</th>`);
+    comparisonTableHeader.append(headerRow);
+
+    // Create data rows for comparison
+    headers.forEach(header => {
+      const rowElement = $('<tr></tr>');
+      rowElement.append(`<td>${header}</td>`);
+      rowElement.append(`<td>${city1Data[header] || 'N/A'}</td>`);
+      rowElement.append(`<td>${city2Data[header] || 'N/A'}</td>`);
+      comparisonTableBody.append(rowElement);
+    });
+   }
+
+    // Function to populate city dropdown for the trend
+    function populateCityTrendDropdown() {
+      const cityTrendDropdown = $('#cityTrendDropdown');
+      const cityNames = new Set();
+
+      // Collect unique city names from all years
+      Object.keys(allData).forEach(year => {
+        allData[year].forEach(row => {
+          cityNames.add(row.CITY);
+        });
+      });
+
+      // Populate the dropdown with the unique city names
+      cityNames.forEach(city => {
+        cityTrendDropdown.append(`<option value="${city}">${city}</option>`);
+      });
+    }
+
+    // Event listener for city selection in the trend dropdown
+    $('#cityTrendDropdown').on('change', function() {
+      const selectedCity = $(this).val();
+      if (selectedCity) {
+        showCityTrend(selectedCity);
+      } else {
+        $('#cityTrendTableHeader').empty();
+        $('#cityTrendTableBody').empty();
+      }
+    });
+
+    // Function to display city metrics trend across years
+    function showCityTrend(cityName) {
+      const cityTrendTableHeader = $('#cityTrendTableHeader');
+      const cityTrendTableBody = $('#cityTrendTableBody');
+
+      // Clear existing content
+      cityTrendTableHeader.empty();
+      cityTrendTableBody.empty();
+
+      // Prepare data for the selected city across years
+      const cityData = [];
+      Object.keys(allData).forEach(year => {
+        const cityYearData = allData[year].find(row => row.CITY === cityName);
+        if (cityYearData) {
+          cityData.push({ ...cityYearData, year });
+        }
+      });
+
+      if (cityData.length > 0) {
+        // Create header row
+        const headers = Object.keys(cityData[0]);
+        const headerRow = $('<tr></tr>');
+        headerRow.append('<th>Year</th>');
+        headers.forEach(header => {
+          if (header !== 'year') {
+            headerRow.append(`<th>${header}</th>`);
+          }
+        });
+        cityTrendTableHeader.append(headerRow);
+
+        // Create data rows for each year
+        cityData.forEach(row => {
+          const rowElement = $('<tr></tr>');
+          rowElement.append(`<td>${row.year}</td>`);
+          headers.forEach(header => {
+            if (header !== 'year') {
+              rowElement.append(`<td>${row[header] || 'N/A'}</td>`);
+            }
+          });
+          cityTrendTableBody.append(rowElement);
+        });
+      } else {
+        cityTrendTableBody.append('<tr><td colspan="100%">No data available for this city.</td></tr>');
+      }
+    }
+
+    // Load all the CSVs and initialize the page
+    loadAllCSVs();
+  });
+</script>
