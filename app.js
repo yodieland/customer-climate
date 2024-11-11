@@ -1,7 +1,7 @@
 
 const getAirQuality = async (zipCode) => {
     try {
-      const apiKey = 'your_actual_api_key'; // Replace with your actual API key
+      const apiKey = '659646B4-5043-4CD7-8696-5B03248B98C6'; // Replace with your actual API key
       const url = `https://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=${zipCode}&distance=25&API_KEY=${apiKey}`;
   
       const response = await fetch(url);
