@@ -5,20 +5,30 @@ const getAirQuality = async (zipCode) => {
       const url = `https://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=${zipCode}&distance=25&API_KEY=${apiKey}`;
   
       const response = await fetch(url);
-  
       if (!response.ok) {
-        console.error(`Error: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        console.error(`Error: ${response.status} ${response.statusText}`, errorText);
         return;
       }
   
       const data = await response.json();
       console.log('Parsed data:', data);
   
+      // Filter out duplicate observations
+      const uniqueData = data.filter((observation, index, self) =>
+        index === self.findIndex((o) =>
+          o.AQI === observation.AQI &&
+          o.DateObserved === observation.DateObserved &&
+          o.HourObserved === observation.HourObserved &&
+          o.ReportingArea === observation.ReportingArea
+        )
+      );
+  
       // Display the data in the result div
       const resultDiv = document.getElementById("result");
       resultDiv.innerHTML = ''; // Clear previous content
   
-      data.forEach((observation) => {
+      uniqueData.forEach((observation) => {
         const observationHtml = `
           <div>
             <p><strong>Date Observed:</strong> ${observation.DateObserved}</p>
