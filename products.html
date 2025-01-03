@@ -333,29 +333,46 @@ a.btn:hover {
 
     <script src="app.js"></script>
 
-  <div class="container">
-   <h2>City Demographics and Economic Data</h2>
-   <div class="category-select">
-        <label><input type="checkbox" class="category-filter" value="Social"> Social</label>
-        <label><input type="checkbox" class="category-filter" value="Economic"> Economic</label>
-        <label><input type="checkbox" class="category-filter" value="Political"> Political</label>
-        <label><input type="checkbox" class="category-filter" value="Environmental"> Environmental</label>
-    </div>
-   <!-- Dropdown to select Year and then City -->
-   <label for="yearCityDropdown">Select Year:</label>
-   <select id="yearCityDropdown" class="form-control mb-3">
-     <option value="">Select Year</option>
-     <option value="2018">2018</option>
-     <option value="2019">2019</option>
-     <option value="2021">2021</option>
-     <option value="2022">2022</option>
-   </select>
+    <div class="container mt-4">
+      <h2>City Demographics and Economic Data</h2>
 
-   <label for="cityForYearDropdown">Select City:</label>
-   <select id="cityForYearDropdown" class="form-control mb-3" disabled>
-     <option value="">Select City</option>
-     <!-- Options will be dynamically populated after selecting year -->
-   </select>
+      <label>Select Year:</label>
+      <select id="yearDropdown" class="form-select mb-3">
+          <option value="" disabled selected>Select a year</option>
+          <option value="https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202018.csv">2018</option>
+          <option value="https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202019.csv">2019</option>
+          <option value="https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202021.csv">2021</option>
+          <option value="https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202022.csv">2022</option>
+      </select>
+
+      <label>Select City:</label>
+      <select id="cityDropdown" class="form-select mb-3" disabled>
+          <option value="" disabled selected>Select a city</option>
+      </select>
+
+      <label>Filter by Category:</label>
+      <div class="form-check">
+          <input type="checkbox" class="form-check-input category-filter" value="Social"> Social
+      </div>
+      <div class="form-check">
+          <input type="checkbox" class="form-check-input category-filter" value="Economic"> Economic
+      </div>
+      <div class="form-check">
+          <input type="checkbox" class="form-check-input category-filter" value="Political"> Political
+      </div>
+      <div class="form-check">
+          <input type="checkbox" class="form-check-input category-filter" value="Environmental"> Environmental
+      </div>
+
+      <button id="filterBtn" class="btn btn-primary mt-3">Apply Filters</button>
+
+      <table id="dataTable" class="table mt-4">
+          <thead id="tableHead"></thead>
+          <tbody id="tableBody"></tbody>
+      </table>
+  </div>
+
+   
 
    <!-- Table to display the city data for the selected year -->
    <table id="cityDataForYearTable" class="table table-bordered table-striped">
@@ -435,7 +452,101 @@ a.btn:hover {
       <tbody id="tableBody"></tbody>
     </table> -->
   </div>
+  <script>
+    $(document).ready(function () {
+        let csvData = [];
+        let cityColumn = null;
+        let categoryMap = {};
 
+        function resetTable() {
+            $("#tableHead").empty();
+            $("#tableBody").empty();
+        }
+
+        function alignCategories(csvData) {
+            const categoryRowIndex = csvData.findIndex(row => Object.values(row).includes("CATEGORY"));
+            if (categoryRowIndex === -1) return null;
+
+            const headers = Object.keys(csvData[0]);
+            const categoryRow = Object.values(csvData[categoryRowIndex]);
+            const map = {};
+            headers.forEach((header, index) => {
+                map[header] = categoryRow[index] || "Uncategorized";
+            });
+            return map;
+        }
+
+        function populateCityDropdown(data) {
+            cityColumn = Object.keys(data[0]).find(col => col.toLowerCase().includes("city"));
+            if (!cityColumn) {
+                alert("No 'City' column found.");
+                return;
+            }
+
+            const cities = [...new Set(data.map(row => row[cityColumn]?.trim()).filter(Boolean))].sort();
+            const cityDropdown = $("#cityDropdown").empty().append('<option value="" disabled selected>Select a city</option>');
+            cities.forEach(city => cityDropdown.append(new Option(city, city)));
+            cityDropdown.prop("disabled", false);
+        }
+
+        function displayTable(data, columns) {
+            resetTable();
+            const headerHtml = columns.map(col => `<th>${col}</th>`).join("");
+            $("#tableHead").append(`<tr>${headerHtml}</tr>`);
+
+            data.forEach(row => {
+                const rowHtml = columns.map(col => `<td>${row[col] || "N/A"}</td>`).join("");
+                $("#tableBody").append(`<tr>${rowHtml}</tr>`);
+            });
+        }
+
+        $("#yearDropdown").on("change", function () {
+            resetTable();
+            $("#cityDropdown").prop("disabled", true).html('<option value="" disabled selected>Select a city</option>');
+
+            const selectedYearUrl = $(this).val();
+            Papa.parse(selectedYearUrl, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function (result) {
+                    csvData = result.data;
+                    categoryMap = alignCategories(csvData);
+                    populateCityDropdown(csvData);
+                },
+                error: function (error) {
+                    console.error("Error loading CSV:", error);
+                }
+            });
+        });
+
+        $("#filterBtn").on("click", function () {
+            const selectedCity = $("#cityDropdown").val();
+            const selectedCategories = $(".category-filter:checked").map((_, el) => el.value.toLowerCase()).get();
+
+            if (!selectedCity) {
+                alert("Please select a city!");
+                return;
+            }
+
+            const filteredRows = csvData.filter(row => row[cityColumn]?.trim() === selectedCity);
+            const columnsToShow = [cityColumn];
+
+            Object.entries(categoryMap).forEach(([header, category]) => {
+                if (selectedCategories.includes(category.toLowerCase()) && !columnsToShow.includes(header)) {
+                    columnsToShow.push(header);
+                }
+            });
+
+            if (columnsToShow.length === 1) {
+                alert("No matching columns for the selected categories!");
+                return;
+            }
+
+            displayTable(filteredRows, columnsToShow);
+        });
+    });
+</script>
   <script>
     $(document).ready(function() {
       let allData = {}; // Store data for all years
