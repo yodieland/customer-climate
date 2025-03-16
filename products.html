@@ -21,6 +21,11 @@
     <style>
     /* General styling for body and typography */
 /* General Styling */
+/* Override Bootstrap's default font */
+body, h1, h2, h3, h4, h5, h6, p, a, button {
+    font-family: 'Lato', sans-serif !important;
+}
+
 body {
     font-family: 'Lato', sans-serif;
     background-color: #f5f5f5;
@@ -146,7 +151,7 @@ body {
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg custom-navbar">
     <div class="container">
-       <a class="navbar-brand" href="index.html">
+      <a class="navbar-brand" href="index.html">
         <img src="Picture2.png" alt="Welcome" style="height: 40px;">
     </a>
         <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav">
@@ -237,23 +242,23 @@ body {
 
     <script src="app.js"></script>
 
-    <div class="container mt-4">
+    <div class="container">
       <h2>City Demographics and Economic Data</h2>
-
+  
       <label>Select Year:</label>
       <select id="yearDropdown" class="form-select mb-3">
           <option value="" disabled selected>Select a year</option>
-          <option value="https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202018.csv">2018</option>
-          <option value="https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202019.csv">2019</option>
-          <option value="https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202021.csv">2021</option>
-          <option value="https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202022.csv">2022</option>
+          <option value="2018">2018</option>
+          <option value="2019">2019</option>
+          <option value="2021">2021</option>
+          <option value="2022">2022</option>
       </select>
-
+  
       <label>Select City:</label>
       <select id="cityDropdown" class="form-select mb-3" disabled>
           <option value="" disabled selected>Select a city</option>
       </select>
-
+  
       <label>Filter by Category:</label>
       <div class="form-check">
           <input type="checkbox" class="form-check-input category-filter" value="Social"> Social
@@ -267,14 +272,15 @@ body {
       <div class="form-check">
           <input type="checkbox" class="form-check-input category-filter" value="Environmental"> Environmental
       </div>
-
+  
       <button id="filterBtn" class="btn btn-primary mt-3">Apply Filters</button>
-
-      <table id="dataTable" class="table mt-4">
-          <thead id="tableHead"></thead>
-          <tbody id="tableBody"></tbody>
+  
+      <table id="cityMetricsTable" class="table table-bordered table-striped mt-4">
+          <thead id="cityMetricsTableHeader"></thead>
+          <tbody id="cityMetricsTableBody"></tbody>
       </table>
   </div>
+  
 
    
 
@@ -286,33 +292,50 @@ body {
  </div>
 
      <!-- Search and Compare Cities -->
-   <div class="container">
-     <h2>Compare Two Cities</h2>
-     <label for="csvDropdown">Select Data Year:</label>
-     <select id="csvDropdown" class="form-control mb-3">
-       <option value="https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202018.csv">Metrics Table - 2018</option>
-       <option value="https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202019.csv">Metrics Table - 2019</option>
-       <option value="https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202021.csv">Metrics Table - 2021</option>
-       <option value="https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202022.csv">Metrics Table - 2022</option>
-     </select>
+   <!-- City Comparison Section -->
+<div class="container">
+  <h2>Compare Two Cities</h2>
+  
+  <label for="csvDropdown">Select Data Type & Year:</label>
+  <select id="csvDropdown" class="form-control mb-3">
+      <!-- Metrics Tables -->
+      <optgroup label="Metrics Tables">
+          <option value="metrics-2018">Metrics Table - 2018</option>
+          <option value="metrics-2019">Metrics Table - 2019</option>
+          <option value="metrics-2021">Metrics Table - 2021</option>
+          <option value="metrics-2022">Metrics Table - 2022</option>
+      </optgroup>
+      <!-- Data Points Tables -->
+      <optgroup label="Data Points Tables">
+          <option value="data-2018">Data Points Table - 2018</option>
+          <option value="data-2019">Data Points Table - 2019</option>
+          <option value="data-2021">Data Points Table - 2021</option>
+          <option value="data-2022">Data Points Table - 2022</option>
+      </optgroup>
+  </select>
 
-     <!-- Dropdowns to select cities -->
-     <div class="row mb-3">
-       <div class="col-md-6">
-         <label for="city1Dropdown">Select First City:</label>
-         <select id="city1Dropdown" class="form-control">
-           <option value="">Select City 1</option>
-           <!-- Options will be populated dynamically -->
-         </select>
-       </div>
-       <div class="col-md-6">
-         <label for="city2Dropdown">Select Second City:</label>
-         <select id="city2Dropdown" class="form-control">
-           <option value="">Select City 2</option>
-           <!-- Options will be populated dynamically -->
-         </select>
-       </div>
-     </div>
+  <!-- City Selection -->
+  <div class="row mb-3">
+      <div class="col-md-6">
+          <label for="city1Dropdown">Select First City:</label>
+          <select id="city1Dropdown" class="form-control">
+              <option value="">Select City 1</option>
+          </select>
+      </div>
+      <div class="col-md-6">
+          <label for="city2Dropdown">Select Second City:</label>
+          <select id="city2Dropdown" class="form-control">
+              <option value="">Select City 2</option>
+          </select>
+      </div>
+  </div>
+
+  <!-- Comparison Table -->
+  <table id="comparisonTable" class="table table-bordered table-striped">
+      <thead id="comparisonTableHeader"></thead>
+      <tbody id="comparisonTableBody"></tbody>
+  </table>
+</div>
 
      <!-- Comparison Table -->
      <table id="comparisonTable" class="table table-bordered table-striped">
@@ -333,10 +356,16 @@ body {
   </select>
 
   <!-- Table to display the metrics trend across all years -->
-  <table id="cityTrendTable" class="table table-bordered table-striped">
-    <thead id="cityTrendTableHeader"></thead>
-    <tbody id="cityTrendTableBody"></tbody>
-  </table>
+  <table id="metricsTable" class="table">
+    <thead id="metricsTableHeader"></thead>
+    <tbody id="metricsTableBody"></tbody>
+</table>
+
+<table id="dataPointsTable" class="table">
+    <thead id="dataPointsTableHeader"></thead>
+    <tbody id="dataPointsTableBody"></tbody>
+</table>
+
 </div>
 
 <div class="container product-container mt-5">
@@ -357,551 +386,598 @@ body {
     </table> -->
   </div>
   <script>
-    $(document).ready(function () {
-        let csvData = [];
-        let cityColumn = null;
-        let categoryMap = {};
+   $(document).ready(function () {
+    let allMetricsData = {};
+    let allDataPointsData = {};
+    let categoryMap = {};  // Stores categories for filtering
 
-        function resetTable() {
-            $("#tableHead").empty();
-            $("#tableBody").empty();
-        }
+    function loadAllCSVs() {
+        const metricsUrls = {
+            "2018": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202018.csv",
+            "2019": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202019.csv",
+            "2021": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202021.csv",
+            "2022": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202022.csv"
+        };
 
-        function alignCategories(csvData) {
-            const categoryRowIndex = csvData.findIndex(row => Object.values(row).includes("CATEGORY"));
-            if (categoryRowIndex === -1) return null;
+        const dataPointsUrls = {
+            "2018": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/data%20points%20table%20-%202018.csv",
+            "2019": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/data%20points%20table%20-%202019.csv",
+            "2021": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/data%20points%20table%20-%202021.csv",
+            "2022": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/data%20points%20table%20-%202022.csv"
+        };
 
-            const headers = Object.keys(csvData[0]);
-            const categoryRow = Object.values(csvData[categoryRowIndex]);
-            const map = {};
-            headers.forEach((header, index) => {
-                map[header] = categoryRow[index] || "Uncategorized";
-            });
-            return map;
-        }
+        const promises = [];
 
-        function populateCityDropdown(data) {
-            cityColumn = Object.keys(data[0]).find(col => col.toLowerCase().includes("city"));
-            if (!cityColumn) {
-                alert("No 'City' column found.");
-                return;
-            }
-
-            const cities = [...new Set(data.map(row => row[cityColumn]?.trim()).filter(Boolean))].sort();
-            const cityDropdown = $("#cityDropdown").empty().append('<option value="" disabled selected>Select a city</option>');
-            cities.forEach(city => cityDropdown.append(new Option(city, city)));
-            cityDropdown.prop("disabled", false);
-        }
-
-        function displayTable(data, columns) {
-            resetTable();
-            const headerHtml = columns.map(col => `<th>${col}</th>`).join("");
-            $("#tableHead").append(`<tr>${headerHtml}</tr>`);
-
-            data.forEach(row => {
-                const rowHtml = columns.map(col => `<td>${row[col] || "N/A"}</td>`).join("");
-                $("#tableBody").append(`<tr>${rowHtml}</tr>`);
-            });
-        }
-
-        $("#yearDropdown").on("change", function () {
-            resetTable();
-            $("#cityDropdown").prop("disabled", true).html('<option value="" disabled selected>Select a city</option>');
-
-            const selectedYearUrl = $(this).val();
-            Papa.parse(selectedYearUrl, {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
-                complete: function (result) {
-                    csvData = result.data;
-                    categoryMap = alignCategories(csvData);
-                    populateCityDropdown(csvData);
-                },
-                error: function (error) {
-                    console.error("Error loading CSV:", error);
-                }
-            });
+        // Load Metrics Data
+        Object.keys(metricsUrls).forEach(year => {
+            promises.push(new Promise((resolve, reject) => {
+                Papa.parse(metricsUrls[year], {
+                    download: true,
+                    header: true,
+                    complete: function(results) {
+                        allMetricsData[year] = results.data;
+                        extractCategoryMapping(results.data);
+                        resolve();
+                    },
+                    error: function(error) {
+                        console.error("Error loading metrics CSV:", error);
+                        reject();
+                    }
+                });
+            }));
         });
 
-        $("#filterBtn").on("click", function () {
-            const selectedCity = $("#cityDropdown").val();
+        // Load Data Points
+        Object.keys(dataPointsUrls).forEach(year => {
+            promises.push(new Promise((resolve, reject) => {
+                Papa.parse(dataPointsUrls[year], {
+                    download: true,
+                    header: true,
+                    complete: function(results) {
+                        allDataPointsData[year] = results.data;
+                        resolve();
+                    },
+                    error: function(error) {
+                        console.error("Error loading data points CSV:", error);
+                        reject();
+                    }
+                });
+            }));
+        });
+
+        Promise.all(promises).then(() => {
+            console.log("All data loaded successfully!");
+            populateCityDropdown();
+        });
+    }
+
+    function extractCategoryMapping(data) {
+        // Check if a "CATEGORY" row exists
+        const categoryRowIndex = data.findIndex(row => Object.values(row).includes("CATEGORY"));
+        if (categoryRowIndex !== -1) {
+            const headers = Object.keys(data[0]);
+            const categoryRow = data[categoryRowIndex];
+
+            headers.forEach(header => {
+                categoryMap[header] = categoryRow[header] || "Uncategorized";
+            });
+        }
+    }
+
+    function populateCityDropdown() {
+        const cityDropdown = $('#cityDropdown');
+        let cityNames = new Set();
+
+        Object.keys(allMetricsData).forEach(year => {
+            allMetricsData[year].forEach(row => cityNames.add(row.CITY));
+        });
+
+        cityDropdown.empty().append('<option value="" disabled selected>Select a city</option>');
+        cityNames.forEach(city => cityDropdown.append(`<option value="${city}">${city}</option>`));
+        cityDropdown.prop("disabled", false);
+    }
+
+    $("#yearDropdown, #cityDropdown").on("change", function () {
+        const selectedYear = $("#yearDropdown").val();
+        const selectedCity = $("#cityDropdown").val();
+        if (selectedYear && selectedCity) {
+            showCityData(selectedYear, selectedCity);
+        }
+    });
+
+    function showCityData(year, cityName) {
+        console.log("Fetching data for:", cityName, "in", year);
+
+        const cityMetricsTableHeader = $('#cityMetricsTableHeader');
+        const cityMetricsTableBody = $('#cityMetricsTableBody');
+
+        cityMetricsTableHeader.empty();
+        cityMetricsTableBody.empty();
+
+        const cityMetricsData = allMetricsData[year]?.find(row => row.CITY === cityName);
+        const cityDataPointsData = allDataPointsData[year]?.find(row => row.CITY === cityName);
+
+        if (cityMetricsData && cityDataPointsData) {
+            const headersMetrics = Object.keys(cityMetricsData);
+            const headersDataPoints = Object.keys(cityDataPointsData);
+
+            // Get selected category filters
             const selectedCategories = $(".category-filter:checked").map((_, el) => el.value.toLowerCase()).get();
 
-            if (!selectedCity) {
-                alert("Please select a city!");
-                return;
-            }
+            const headerRow = $('<tr></tr>');
+            headerRow.append('<th>Metric</th><th>Value</th><th>Data Point</th><th>Value</th>');
+            cityMetricsTableHeader.append(headerRow);
 
-            const filteredRows = csvData.filter(row => row[cityColumn]?.trim() === selectedCity);
-            const columnsToShow = [cityColumn];
-
-            Object.entries(categoryMap).forEach(([header, category]) => {
-                if (selectedCategories.includes(category.toLowerCase()) && !columnsToShow.includes(header)) {
-                    columnsToShow.push(header);
+            headersMetrics.forEach((header, index) => {
+                if (header !== "CITY" && header !== "year") {
+                    // Check if the metric belongs to the selected category
+                    if (selectedCategories.length === 0 || selectedCategories.includes(categoryMap[header]?.toLowerCase())) {
+                        const rowElement = $('<tr></tr>');
+                        rowElement.append(`<td>${header}</td>`);
+                        rowElement.append(`<td>${cityMetricsData[header] || 'N/A'}</td>`);
+                        rowElement.append(`<td>${headersDataPoints[index] || 'N/A'}</td>`);
+                        rowElement.append(`<td>${cityDataPointsData[headersDataPoints[index]] || 'N/A'}</td>`);
+                        cityMetricsTableBody.append(rowElement);
+                    }
                 }
             });
-
-            if (columnsToShow.length === 1) {
-                alert("No matching columns for the selected categories!");
-                return;
-            }
-
-            displayTable(filteredRows, columnsToShow);
-        });
-    });
-</script>
-  <script>
-    $(document).ready(function() {
-      let allData = {}; // Store data for all years
-      const csvUrls = {
-        "2018": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202018.csv",
-        "2019": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202019.csv",
-        "2021": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202021.csv",
-        "2022": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202022.csv"
-      };
-
-      // Load data from all CSVs
-      function loadAllCSVs() {
-        const promises = [];
-        Object.keys(csvUrls).forEach(year => {
-          promises.push(new Promise((resolve, reject) => {
-            Papa.parse(csvUrls[year], {
-              download: true,
-              header: true,
-              complete: function(results) {
-                allData[year] = results.data;
-                resolve();
-              },
-              error: function(error) {
-                console.log("Failed to load CSV: ", error);
-                reject();
-              }
-            });
-          }));
-        });
-
-        // Once all CSVs are loaded
-        Promise.all(promises).then(() => {
-          $('#cityForYearDropdown').prop('disabled', true);
-        });
-      }
-      $('.category-filter').on('change', function() {
-       const selectedCategories = $('.category-filter:checked').map(function() {
-           return this.value;
-       }).get();
-       displayDataByCategory(selectedCategories);
-   });
-   function displayDataByCategory(selectedCategories) {
-      // Clear existing content in all tables
-      clearTables();
-
-      selectedCategories.forEach(category => {
-          const categoryData = Object.values(allData).flat().filter(row => row.CATEGORY === category);
-          buildTable(categoryData, `#${category.toLowerCase()}TableHeader`, `#${category.toLowerCase()}TableBody`);
-      });
-  }
-  function clearTables() {
-      $('#socialTableHeader, #socialTableBody, #economicTableHeader, #economicTableBody, #politicalTableHeader, #politicalTableBody, #environmentalTableHeader, #environmentalTableBody').empty();
-  }
-
-      // Event listener for year selection
-      $('#yearCityDropdown').on('change', function() {
-        const selectedYear = $(this).val();
-        if (selectedYear) {
-          populateCityDropdownForYear(selectedYear);
         } else {
-          $('#cityForYearDropdown').prop('disabled', true);
-          $('#cityForYearDropdown').empty().append('<option value="">Select City</option>');
-          $('#cityDataForYearTable').hide();
+            cityMetricsTableBody.append('<tr><td colspan="4">No data available for this city and year.</td></tr>');
         }
-      });
+    }
 
-      // Populate city dropdown after selecting year
-      function populateCityDropdownForYear(year) {
-        const cityForYearDropdown = $('#cityForYearDropdown');
-        cityForYearDropdown.empty().append('<option value="">Select City</option>');
-
-        const cities = new Set();
-        allData[year].forEach(row => {
-          cities.add(row.CITY);
-        });
-
-        cities.forEach(city => {
-          cityForYearDropdown.append(`<option value="${city}">${city}</option>`);
-        });
-
-        cityForYearDropdown.prop('disabled', false);
-      }
-
-      // Event listener for city selection for the selected year
-      $('#cityForYearDropdown').on('change', function() {
-        const selectedCity = $(this).val();
-        const selectedYear = $('#yearCityDropdown').val();
-        if (selectedCity && selectedYear) {
-          showCityDataForYear(selectedCity, selectedYear);
+    $("#filterBtn").on("click", function () {
+        const selectedYear = $("#yearDropdown").val();
+        const selectedCity = $("#cityDropdown").val();
+        if (selectedYear && selectedCity) {
+            showCityData(selectedYear, selectedCity);
         }
-      });
-
-      // Display city data for the selected year
-      function showCityDataForYear(cityName, year) {
-        const cityDataForYearHeader = $('#cityDataForYearHeader');
-        const cityDataForYearBody = $('#cityDataForYearBody');
-
-        // Clear existing content
-        cityDataForYearHeader.empty();
-        cityDataForYearBody.empty();
-
-        const cityYearData = allData[year].find(row => row.CITY === cityName);
-
-        if (cityYearData) {
-          // Create header row
-          const headers = Object.keys(cityYearData);
-          const headerRow = $('<tr></tr>');
-          headers.forEach(header => {
-            headerRow.append(`<th>${header}</th>`);
-          });
-          cityDataForYearHeader.append(headerRow);
-
-          // Create data row for city
-          const dataRow = $('<tr></tr>');
-          headers.forEach(header => {
-            dataRow.append(`<td>${cityYearData[header] || 'N/A'}</td>`);
-          });
-          cityDataForYearBody.append(dataRow);
-        } else {
-          cityDataForYearBody.append('<tr><td colspan="100%">No data available for this city in the selected year.</td></tr>');
-        }
-      }
-
-      // Load all the CSVs and initialize the page
-      loadAllCSVs();
     });
+
+    loadAllCSVs();
+});
+
+
     </script>
-  <script>
-  $(document).ready(function() {
-    let originalData = [];  // This will store the original data
-
-    // Load the initial CSV
-    loadCSV($('#csvDropdown').val());
-
-    // Event listener for dropdown change
-    $('#csvDropdown').on('change', function() {
-      const selectedCSV = $(this).val();
-      loadCSV(selectedCSV);
-    });
-
-    // Event listener for the search input field
-    $('#searchInput').on('keyup', function() {
-    const searchValue = $(this).val().toLowerCase();
-
-    // Filter the data by checking if the city name starts with the search input
-    const filteredData = originalData.filter(row =>
-      row.CITY && row.CITY.toLowerCase().startsWith(searchValue)
-    );
-
-    // Rebuild the table with the filtered data
-    buildTable(filteredData);
-  });
-     $('#city1Dropdown, #city2Dropdown').on('change', function() {
-    compareCities();
-  });
-    // Function to load and display CSV
-    function loadCSV(csvUrl) {
-      Papa.parse(csvUrl, {
-        download: true,
-        header: true,
-        complete: function(results) {
-          originalData = results.data;  // Save the original data
-           populateCityDropdowns(originalData);
-          buildTable(originalData);  // Build the table with original data
-        },
-        error: function(error) {
-        console.log("Failed to load CSV: ", error);
-      }
-      });
-    }
-
-    // Function to populate city dropdowns
-   function populateCityDropdowns(data) {
-     const city1Dropdown = $('#city1Dropdown');
-     const city2Dropdown = $('#city2Dropdown');
-     city1Dropdown.empty();
-     city2Dropdown.empty();
-
-     city1Dropdown.append('<option value="">Select City 1</option>');
-     city2Dropdown.append('<option value="">Select City 2</option>');
-
-     data.forEach(row => {
-       city1Dropdown.append(`<option value="${row.CITY}">${row.CITY}</option>`);
-       city2Dropdown.append(`<option value="${row.CITY}">${row.CITY}</option>`);
-     });
-   }
-
-   // Function to compare selected cities
-   function compareCities() {
-     const city1 = $('#city1Dropdown').val();
-     const city2 = $('#city2Dropdown').val();
-     const city1Data = originalData.find(row => row.CITY === city1);
-     const city2Data = originalData.find(row => row.CITY === city2);
-
-     buildComparisonTable(city1Data, city2Data);
-   }
-
-   // Function to build comparison table
-   function buildComparisonTable(city1Data, city2Data) {
-     const comparisonTableHeader = $('#comparisonTableHeader');
-     const comparisonTableBody = $('#comparisonTableBody');
-
-     // Clear existing content
-     comparisonTableHeader.empty();
-     comparisonTableBody.empty();
-
-     // Ensure both cities are selected
-     if (!city1Data || !city2Data) {
-       return;
-     }
-
-     // Create header row
-     const headers = Object.keys(city1Data);
-     const headerRow = $('<tr></tr>');
-     headerRow.append('<th>Metrics</th>');
-     headerRow.append(`<th>${city1Data.CITY}</th>`);
-     headerRow.append(`<th>${city2Data.CITY}</th>`);
-     comparisonTableHeader.append(headerRow);
-
-     // Create data rows for comparison
-     headers.forEach(header => {
-       const rowElement = $('<tr></tr>');
-       rowElement.append(`<td>${header}</td>`);
-       rowElement.append(`<td>${city1Data[header] || 'N/A'}</td>`);
-       rowElement.append(`<td>${city2Data[header] || 'N/A'}</td>`);
-       comparisonTableBody.append(rowElement);
-     });
-   }
-
-    // Function to build table with CSV data
-    function buildTable(data) {
-      const tableHeader = document.getElementById('tableHeader');
-      const tableBody = document.getElementById('tableBody');
-
-      // Clear existing content
-      tableHeader.innerHTML = '';
-      tableBody.innerHTML = '';
-
-      if (data.length > 0) {
-        // Create header row
-        const headers = Object.keys(data[0]);
-        const headerRow = document.createElement('tr');
-        headers.forEach(header => {
-          const th = document.createElement('th');
-          th.textContent = header;
-          headerRow.appendChild(th);
-        });
-        tableHeader.appendChild(headerRow);
-
-        // Create data rows
-        data.forEach(row => {
-          const rowElement = document.createElement('tr');
-          headers.forEach(header => {
-            const td = document.createElement('td');
-            td.textContent = row[header];
-            rowElement.appendChild(td);
-          });
-          tableBody.appendChild(rowElement);
-        });
-      }
-    }
-  });
-</script>
 <script>
-  $(document).ready(function() {
-    let allData = {}; // Store data for all years
+  $(document).ready(function () {
+    let originalData = []; // ✅ Define globally so it can be accessed anywhere
+
     const csvUrls = {
-      "2018": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202018.csv",
-      "2019": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202019.csv",
-      "2021": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202021.csv",
-      "2022": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202022.csv"
+        "metrics-2018": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202018.csv",
+        "metrics-2019": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202019.csv",
+        "metrics-2021": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202021.csv",
+        "metrics-2022": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202022.csv",
+        "data-2018": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/data%20points%20table%20-%202018.csv",
+        "data-2019": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/data%20points%20table%20-%202019.csv",
+        "data-2021": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/data%20points%20table%20-%202021.csv",
+        "data-2022": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/data%20points%20table%20-%202022.csv"
     };
 
-    // Load data from all CSVs
-    function loadAllCSVs() {
-      const promises = [];
-      Object.keys(csvUrls).forEach(year => {
-        promises.push(new Promise((resolve, reject) => {
-          Papa.parse(csvUrls[year], {
+    function loadCSV(type) {
+        if (!csvUrls[type]) {
+            console.error("No CSV URL found for selected type.");
+            return;
+        }
+
+        Papa.parse(csvUrls[type], {
             download: true,
             header: true,
-            complete: function(results) {
-              allData[year] = results.data;
-              resolve();
+            skipEmptyLines: true,
+            complete: function (results) {
+                if (!results.data || results.data.length === 0) {
+                    console.error("No data found in CSV.");
+                    return;
+                }
+                originalData = results.data; // ✅ Now originalData is properly assigned
+                console.log("Loaded data:", originalData); // Debugging step
+                populateCityDropdowns(originalData);
             },
-            error: function(error) {
-              console.log("Failed to load CSV: ", error);
-              reject();
+            error: function (error) {
+                console.error("Failed to load CSV:", error);
             }
-          });
-        }));
-      });
-
-      // Once all CSVs are loaded, populate the dropdown
-      Promise.all(promises).then(() => {
-        populateCityTrendDropdown();
-      });
-    }
-    $('#city1Dropdown, #city2Dropdown').on('change', function() {
-   compareCities();
-   });
-   // Function to load and display CSV
-   function loadCSV(csvUrl) {
-     Papa.parse(csvUrl, {
-       download: true,
-       header: true,
-       complete: function(results) {
-         originalData = results.data;  // Save the original data
-          populateCityDropdowns(originalData);
-         buildTable(originalData);  // Build the table with original data
-       },
-       error: function(error) {
-       console.log("Failed to load CSV: ", error);
-     }
-     });
-   }
-
-   // Function to populate city dropdowns
-   function populateCityDropdowns(data) {
-    const city1Dropdown = $('#city1Dropdown');
-    const city2Dropdown = $('#city2Dropdown');
-    city1Dropdown.empty();
-    city2Dropdown.empty();
-
-    city1Dropdown.append('<option value="">Select City 1</option>');
-    city2Dropdown.append('<option value="">Select City 2</option>');
-
-    data.forEach(row => {
-      city1Dropdown.append(`<option value="${row.CITY}">${row.CITY}</option>`);
-      city2Dropdown.append(`<option value="${row.CITY}">${row.CITY}</option>`);
-    });
-   }
-
-   // Function to compare selected cities
-   function compareCities() {
-    const city1 = $('#city1Dropdown').val();
-    const city2 = $('#city2Dropdown').val();
-    const city1Data = originalData.find(row => row.CITY === city1);
-    const city2Data = originalData.find(row => row.CITY === city2);
-
-    buildComparisonTable(city1Data, city2Data);
-   }
-
-   // Function to build comparison table
-   function buildComparisonTable(city1Data, city2Data) {
-    const comparisonTableHeader = $('#comparisonTableHeader');
-    const comparisonTableBody = $('#comparisonTableBody');
-
-    // Clear existing content
-    comparisonTableHeader.empty();
-    comparisonTableBody.empty();
-
-    // Ensure both cities are selected
-    if (!city1Data || !city2Data) {
-      return;
-    }
-
-    // Create header row
-    const headers = Object.keys(city1Data);
-    const headerRow = $('<tr></tr>');
-    headerRow.append('<th>Metrics</th>');
-    headerRow.append(`<th>${city1Data.CITY}</th>`);
-    headerRow.append(`<th>${city2Data.CITY}</th>`);
-    comparisonTableHeader.append(headerRow);
-
-    // Create data rows for comparison
-    headers.forEach(header => {
-      const rowElement = $('<tr></tr>');
-      rowElement.append(`<td>${header}</td>`);
-      rowElement.append(`<td>${city1Data[header] || 'N/A'}</td>`);
-      rowElement.append(`<td>${city2Data[header] || 'N/A'}</td>`);
-      comparisonTableBody.append(rowElement);
-    });
-   }
-
-    // Function to populate city dropdown for the trend
-    function populateCityTrendDropdown() {
-      const cityTrendDropdown = $('#cityTrendDropdown');
-      const cityNames = new Set();
-
-      // Collect unique city names from all years
-      Object.keys(allData).forEach(year => {
-        allData[year].forEach(row => {
-          cityNames.add(row.CITY);
         });
-      });
-
-      // Populate the dropdown with the unique city names
-      cityNames.forEach(city => {
-        cityTrendDropdown.append(`<option value="${city}">${city}</option>`);
-      });
     }
 
-    // Event listener for city selection in the trend dropdown
-    $('#cityTrendDropdown').on('change', function() {
-      const selectedCity = $(this).val();
-      if (selectedCity) {
-        showCityTrend(selectedCity);
-      } else {
-        $('#cityTrendTableHeader').empty();
-        $('#cityTrendTableBody').empty();
-      }
-    });
+    function populateCityDropdowns(data) {
+        const city1Dropdown = $('#city1Dropdown');
+        const city2Dropdown = $('#city2Dropdown');
+        city1Dropdown.empty();
+        city2Dropdown.empty();
 
-    // Function to display city metrics trend across years
-    function showCityTrend(cityName) {
-      const cityTrendTableHeader = $('#cityTrendTableHeader');
-      const cityTrendTableBody = $('#cityTrendTableBody');
+        city1Dropdown.append('<option value="">Select City 1</option>');
+        city2Dropdown.append('<option value="">Select City 2</option>');
 
-      // Clear existing content
-      cityTrendTableHeader.empty();
-      cityTrendTableBody.empty();
-
-      // Prepare data for the selected city across years
-      const cityData = [];
-      Object.keys(allData).forEach(year => {
-        const cityYearData = allData[year].find(row => row.CITY === cityName);
-        if (cityYearData) {
-          cityData.push({ ...cityYearData, year });
+        const cities = [...new Set(data.map(row => row.CITY?.trim()).filter(Boolean))].sort();
+        if (cities.length === 0) {
+            console.warn("No cities found in dataset.");
         }
-      });
 
-      if (cityData.length > 0) {
-        // Create header row
-        const headers = Object.keys(cityData[0]);
-        const headerRow = $('<tr></tr>');
-        headerRow.append('<th>Year</th>');
-        headers.forEach(header => {
-          if (header !== 'year') {
-            headerRow.append(`<th>${header}</th>`);
-          }
+        cities.forEach(city => {
+            city1Dropdown.append(`<option value="${city}">${city}</option>`);
+            city2Dropdown.append(`<option value="${city}">${city}</option>`);
         });
-        cityTrendTableHeader.append(headerRow);
-
-        // Create data rows for each year
-        cityData.forEach(row => {
-          const rowElement = $('<tr></tr>');
-          rowElement.append(`<td>${row.year}</td>`);
-          headers.forEach(header => {
-            if (header !== 'year') {
-              rowElement.append(`<td>${row[header] || 'N/A'}</td>`);
-            }
-          });
-          cityTrendTableBody.append(rowElement);
-        });
-      } else {
-        cityTrendTableBody.append('<tr><td colspan="100%">No data available for this city.</td></tr>');
-      }
     }
 
-    // Load all the CSVs and initialize the page
-    loadAllCSVs();
-  });
+    function compareCities() {
+        if (!originalData || originalData.length === 0) {
+            console.error("originalData is empty or not loaded yet.");
+            return;
+        }
+
+        const city1 = $('#city1Dropdown').val();
+        const city2 = $('#city2Dropdown').val();
+        if (!city1 || !city2) {
+            console.warn("Please select both cities.");
+            return;
+        }
+
+        const city1Data = originalData.find(row => row.CITY === city1);
+        const city2Data = originalData.find(row => row.CITY === city2);
+
+        if (!city1Data || !city2Data) {
+            console.error("City data not found.");
+            return;
+        }
+
+        buildComparisonTable(city1Data, city2Data);
+    }
+
+    function buildComparisonTable(city1Data, city2Data) {
+        const comparisonTableHeader = $('#comparisonTableHeader');
+        const comparisonTableBody = $('#comparisonTableBody');
+
+        // Clear previous content
+        comparisonTableHeader.empty();
+        comparisonTableBody.empty();
+
+        if (!city1Data || !city2Data) {
+            console.warn("City data missing for one or both cities.");
+            return;
+        }
+
+        // Extract headers (excluding "CITY")
+        const headers = Object.keys(city1Data).filter(header => header !== "CITY");
+
+        let headerRow = `<tr><th>Metrics</th><th>${city1Data.CITY}</th><th>${city2Data.CITY}</th></tr>`;
+        comparisonTableHeader.append(headerRow);
+
+        headers.forEach(header => {
+            let row = `<tr>
+                <td>${header}</td>
+                <td>${city1Data[header] || 'N/A'}</td>
+                <td>${city2Data[header] || 'N/A'}</td>
+            </tr>`;
+            comparisonTableBody.append(row);
+        });
+    }
+
+    $('#csvDropdown').on('change', function () {
+        loadCSV($(this).val());
+    });
+
+    $('#city1Dropdown, #city2Dropdown').on('change', function () {
+        compareCities();
+    });
+
+    loadCSV($('#csvDropdown').val()); // ✅ Load initial dataset when the page loads
+});
+
+    
 </script>
+
+
+
+<script>
+  $(document).ready(function () {
+    let originalData = []; // ✅ Define globally so it can be accessed anywhere
+
+    const csvUrls = {
+        "metrics-2018": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202018.csv",
+        "metrics-2019": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202019.csv",
+        "metrics-2021": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202021.csv",
+        "metrics-2022": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202022.csv",
+        "data-2018": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/data%20points%20table%20-%202018.csv",
+        "data-2019": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/data%20points%20table%20-%202019.csv",
+        "data-2021": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/data%20points%20table%20-%202021.csv",
+        "data-2022": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/data%20points%20table%20-%202022.csv"
+    };
+
+    function loadCSV(type) {
+        if (!csvUrls[type]) {
+            console.error("No CSV URL found for selected type.");
+            return;
+        }
+
+        Papa.parse(csvUrls[type], {
+            download: true,
+            header: true,
+            skipEmptyLines: true,
+            complete: function (results) {
+                if (!results.data || results.data.length === 0) {
+                    console.error("No data found in CSV.");
+                    return;
+                }
+                originalData = results.data; // ✅ Now originalData is properly assigned
+                console.log("Loaded data:", originalData); // Debugging step
+                populateCityDropdowns(originalData);
+            },
+            error: function (error) {
+                console.error("Failed to load CSV:", error);
+            }
+        });
+    }
+
+    function populateCityDropdowns(data) {
+        const city1Dropdown = $('#city1Dropdown');
+        const city2Dropdown = $('#city2Dropdown');
+        city1Dropdown.empty();
+        city2Dropdown.empty();
+
+        city1Dropdown.append('<option value="">Select City 1</option>');
+        city2Dropdown.append('<option value="">Select City 2</option>');
+
+        const cities = [...new Set(data.map(row => row.CITY?.trim()).filter(Boolean))].sort();
+        if (cities.length === 0) {
+            console.warn("No cities found in dataset.");
+        }
+
+        cities.forEach(city => {
+            city1Dropdown.append(`<option value="${city}">${city}</option>`);
+            city2Dropdown.append(`<option value="${city}">${city}</option>`);
+        });
+    }
+
+    function compareCities() {
+        if (!originalData || originalData.length === 0) {
+            console.error("originalData is empty or not loaded yet.");
+            return;
+        }
+
+        const city1 = $('#city1Dropdown').val();
+        const city2 = $('#city2Dropdown').val();
+        if (!city1 || !city2) {
+            console.warn("Please select both cities.");
+            return;
+        }
+
+        const city1Data = originalData.find(row => row.CITY === city1);
+        const city2Data = originalData.find(row => row.CITY === city2);
+
+        if (!city1Data || !city2Data) {
+            console.error("City data not found.");
+            return;
+        }
+
+        buildComparisonTable(city1Data, city2Data);
+    }
+
+    function buildComparisonTable(city1Data, city2Data) {
+        const comparisonTableHeader = $('#comparisonTableHeader');
+        const comparisonTableBody = $('#comparisonTableBody');
+
+        // Clear previous content
+        comparisonTableHeader.empty();
+        comparisonTableBody.empty();
+
+        if (!city1Data || !city2Data) {
+            console.warn("City data missing for one or both cities.");
+            return;
+        }
+
+        // Extract headers (excluding "CITY")
+        const headers = Object.keys(city1Data).filter(header => header !== "CITY");
+
+        let headerRow = `<tr><th>Metrics</th><th>${city1Data.CITY}</th><th>${city2Data.CITY}</th></tr>`;
+        comparisonTableHeader.append(headerRow);
+
+        headers.forEach(header => {
+            let row = `<tr>
+                <td>${header}</td>
+                <td>${city1Data[header] || 'N/A'}</td>
+                <td>${city2Data[header] || 'N/A'}</td>
+            </tr>`;
+            comparisonTableBody.append(row);
+        });
+    }
+
+    $('#csvDropdown').on('change', function () {
+        loadCSV($(this).val());
+    });
+
+    $('#city1Dropdown, #city2Dropdown').on('change', function () {
+        compareCities();
+    });
+
+    loadCSV($('#csvDropdown').val()); // ✅ Load initial dataset when the page loads
+});
+
+
+</script>
+<script>
+  $(document).ready(function () {
+      let allMetricsData = {};
+      let allDataPointsData = {};
+  
+      function loadAllCSVs() {
+          const metricsUrls = {
+              "2018": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202018.csv",
+              "2019": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202019.csv",
+              "2021": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202021.csv",
+              "2022": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/metrics%20table%20-%202022.csv"
+          };
+  
+          const dataPointsUrls = {
+              "2018": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/data%20points%20table%20-%202018.csv",
+              "2019": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/data%20points%20table%20-%202019.csv",
+              "2021": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/data%20points%20table%20-%202021.csv",
+              "2022": "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/data%20points%20table%20-%202022.csv"
+          };
+  
+          const promises = [];
+  
+          // Load Metrics Data
+          Object.keys(metricsUrls).forEach(year => {
+              promises.push(new Promise((resolve, reject) => {
+                  Papa.parse(metricsUrls[year], {
+                      download: true,
+                      header: true,
+                      complete: function (results) {
+                          allMetricsData[year] = results.data;
+                          console.log(`✅ Loaded metrics data for ${year}:`, results.data);
+                          resolve();
+                      },
+                      error: function (error) {
+                          console.error(`❌ Error loading metrics CSV (${year}):`, error);
+                          reject();
+                      }
+                  });
+              }));
+          });
+  
+          // Load Data Points
+          Object.keys(dataPointsUrls).forEach(year => {
+              promises.push(new Promise((resolve, reject) => {
+                  Papa.parse(dataPointsUrls[year], {
+                      download: true,
+                      header: true,
+                      complete: function (results) {
+                          allDataPointsData[year] = results.data;
+                          console.log(`✅ Loaded data points for ${year}:`, results.data);
+                          resolve();
+                      },
+                      error: function (error) {
+                          console.error(`❌ Error loading data points CSV (${year}):`, error);
+                          reject();
+                      }
+                  });
+              }));
+          });
+  
+          Promise.all(promises).then(() => {
+              console.log("✅ All data loaded successfully!");
+              populateCityTrendDropdown();
+          }).catch(error => console.error("❌ Error loading CSV files:", error));
+      }
+  
+      function populateCityTrendDropdown() {
+          const cityTrendDropdown = $('#cityTrendDropdown');
+          const cityNames = new Set();
+  
+          // Collect unique city names from all years
+          Object.keys(allMetricsData).forEach(year => {
+              allMetricsData[year].forEach(row => {
+                  if (row.CITY || row.City) cityNames.add(row.CITY || row.City);
+              });
+          });
+  
+          Object.keys(allDataPointsData).forEach(year => {
+              allDataPointsData[year].forEach(row => {
+                  if (row.CITY || row.City) cityNames.add(row.CITY || row.City);
+              });
+          });
+  
+          // Populate dropdown
+          cityTrendDropdown.empty().append('<option value="">Select a City</option>');
+          cityNames.forEach(city => {
+              cityTrendDropdown.append(`<option value="${city}">${city}</option>`);
+          });
+      }
+  
+      // Event listener for city selection
+      $('#cityTrendDropdown').on('change', function () {
+          const selectedCity = $(this).val();
+          if (selectedCity) {
+              showCityTrend(selectedCity);
+          } else {
+              $('#metricsTableHeader, #metricsTableBody, #dataPointsTableHeader, #dataPointsTableBody').empty();
+          }
+      });
+  
+      function showCityTrend(cityName) {
+          console.log("Fetching trend for:", cityName);
+  
+          const metricsTableHeader = $('#metricsTableHeader');
+          const metricsTableBody = $('#metricsTableBody');
+          const dataPointsTableHeader = $('#dataPointsTableHeader');
+          const dataPointsTableBody = $('#dataPointsTableBody');
+  
+          metricsTableHeader.empty();
+          metricsTableBody.empty();
+          dataPointsTableHeader.empty();
+          dataPointsTableBody.empty();
+  
+          const cityDataMetrics = [];
+          const cityDataPoints = [];
+  
+          // Get Metrics Data for the selected city
+          Object.keys(allMetricsData).forEach(year => {
+              const cityYearData = allMetricsData[year].find(row => row.CITY === cityName || row.City === cityName);
+              if (cityYearData) {
+                  cityDataMetrics.push({ ...cityYearData, year });
+              }
+          });
+  
+          // Get Data Points for the selected city
+          Object.keys(allDataPointsData).forEach(year => {
+              const cityYearData = allDataPointsData[year].find(row => row.CITY === cityName || row.City === cityName);
+              if (cityYearData) {
+                  cityDataPoints.push({ ...cityYearData, year });
+              }
+          });
+  
+          console.log("📊 City Metrics Data: ", cityDataMetrics);
+          console.log("📊 City Data Points: ", cityDataPoints);
+  
+          if (cityDataMetrics.length > 0) {
+              const headersMetrics = Object.keys(cityDataMetrics[0]).filter(header => header !== 'year' && header !== 'CITY');
+  
+              const headerRow = $('<tr></tr>');
+              headerRow.append('<th>Year</th>');
+              headersMetrics.forEach(header => {
+                  headerRow.append(`<th>${header}</th>`);
+              });
+              metricsTableHeader.append(headerRow);
+  
+              cityDataMetrics.forEach(row => {
+                  const rowElement = $('<tr></tr>');
+                  rowElement.append(`<td>${row.year}</td>`);
+  
+                  headersMetrics.forEach(header => {
+                      rowElement.append(`<td>${row[header] || 'N/A'}</td>`);
+                  });
+  
+                  metricsTableBody.append(rowElement);
+              });
+          } else {
+              metricsTableBody.append('<tr><td colspan="100%">No data available for this city.</td></tr>');
+          }
+  
+          if (cityDataPoints.length > 0) {
+              const headersDataPoints = Object.keys(cityDataPoints[0]).filter(header => header !== 'year' && header !== 'CITY');
+  
+              const headerRow = $('<tr></tr>');
+              headerRow.append('<th>Year</th>');
+              headersDataPoints.forEach(header => {
+                  headerRow.append(`<th>${header}</th>`);
+              });
+              dataPointsTableHeader.append(headerRow);
+  
+              cityDataPoints.forEach(row => {
+                  const rowElement = $('<tr></tr>');
+                  rowElement.append(`<td>${row.year}</td>`);
+  
+                  headersDataPoints.forEach(header => {
+                      rowElement.append(`<td>${row[header] || 'N/A'}</td>`);
+                  });
+  
+                  dataPointsTableBody.append(rowElement);
+              });
+          } else {
+              dataPointsTableBody.append('<tr><td colspan="100%">No data available for this city.</td></tr>');
+          }
+      }
+  
+      loadAllCSVs();
+  });
+  </script>
