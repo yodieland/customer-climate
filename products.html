@@ -248,9 +248,9 @@ body {
         <div class="card">
           <img src="choong-deng-xiang--WXQm_NTK0U-unsplash.jpg" alt="Product 1" class="product-image">
           <div class="card-body">
-            <h5 class="card-title">City Data Metrics & CityCites Score </h5>
-            <p class="card-text">Our free tool is designed to give you curated and simplified data & metrics. Get an instant snapshot of your city. Proprietary algorithms compute scores using 1000's of metrics with our CityCites Score© system.</p>
-            <a href="#yearDropdown" id="learnMoreBtn" class="btn btn-primary">Learn More</a>
+            <h5 class="card-title">City Data Metrics</h5>
+            <p class="card-text">Relevant data insights for your city via metrics. Comparison trends with other cities, advanced analytics and reports upon request.</p>
+            <a href="#" id="learnMoreBtn" class="btn btn-primary">Learn More</a>
           </div>
         </div>
       </div>
@@ -260,9 +260,9 @@ body {
         <div class="card">
           <img src="towfiqu-barbhuiya-nApaSgkzaxg-unsplash.jpg" alt="Product 2" class="product-image">
           <div class="card-body">
-            <h5 class="card-title">Comparitive & Predictive Analytics</h5>
-            <p class="card-text"> Relevant data insights for your city via metrics. Comparison trends with other cities, advanced analytics and reports upon request. Filter and analyze real-time data tailored to your needs. Compare cities based on housing, employment, safety, and more.</p>
-            <a href="#csvDropdown" id="learnMoreBtn" class="btn btn-primary">Learn More</a>
+            <h5 class="card-title">CityCites Score</h5>
+            <p class="card-text">Get an instant snapshot of your city. Proprietary algorithms compute scores using 1000's of metrics with our CityCites Score© system.</p>
+            <a href="#" id="learnMoreBtn" class="btn btn-primary">Learn More</a>
           </div>
         </div>
       </div>
@@ -272,185 +272,235 @@ body {
         <div class="card">
           <img src="campaign-creators-pypeCEaJeZY-unsplash.jpg" alt="Product 3" class="product-image">
           <div class="card-body">
-            <h5 class="card-title">Tailor your Data</h5>
-            <p class="card-text">This custom product is for organizations that need to leverage ML to uncover hidden patterns and trends in urban data.</p>
-            <a href="contact.html" id="learnMoreBtn" class="btn btn-primary">Learn More</a>
+            <h5 class="card-title">Market Forecast Tool</h5>
+            <p class="card-text">Predict city metric trends with our AI-driven forecasting tools.</p>
+            <a href="#" id="learnMoreBtn" class="btn btn-primary">Learn More</a>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <h1>City Score Dashboards</h1>
-<a href="https://scores-pzfpg93bqyylpfdpkepvgo.streamlit.app/" target="_blank">
-    <button>View Linear Scaled Final Score Dashboard</button>
-</a>
-<a href="https://logscores-iixxfoyabyahjz9vo8dcph.streamlit.app/" target="_blank">
-    <button>View Log Scaled Final Score Dashboard</button>
-</a>
-
-    <h1>Check Air Quality</h1>
-  <form id="airQualityForm">
-    <label for="zipCode">Enter ZIP Code:</label>
-    <input type="text" id="zipCode" required />
-    <button type="submit">Check Air Quality</button>
-  </form>
-  <div id="result"></div>
-    <div id="result"></div>
-
-    <script src="app.js"></script>
-
-    <div class="container">
-      <h2>City Demographics and Economic Data</h2>
-  
-      <label>Select Year:</label>
-      <select id="yearDropdown" class="form-select mb-3">
-          <option value="" disabled selected>Select a year</option>
-          <option value="2018">2018</option>
-          <option value="2019">2019</option>
-          <option value="2021">2021</option>
-          <option value="2022">2022</option>
-      </select>
-  
-      <label>Select City:</label>
-      <select id="cityDropdown" class="form-select mb-3" disabled>
-          <option value="" disabled selected>Select a city</option>
-      </select>
-  
-      <label>Filter by Category:</label>
-      <div class="form-check">
-          <input type="checkbox" class="form-check-input category-filter" value="Social"> Social
+  <title>City Metrics Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+      .section-spacing {
+          margin-bottom: 3rem;
+      }
+      .table-container {
+          margin-top: 2rem;
+          margin-bottom: 2rem;
+      }
+      .form-spacing {
+          margin-bottom: 1.5rem;
+      }
+      .button-spacing {
+          margin-right: 1rem;
+          margin-bottom: 1rem;
+      }
+      .embed-responsive {
+          margin-top: 2rem;
+          margin-bottom: 2rem;
+      }
+      .custom-report {
+          margin-top: 3rem;
+      }
+  </style>
+</head>
+<body>
+  <div class="container">
+      <!-- City Score Dashboards -->
+      <div class="section-spacing">
+          <h1>City Score Dashboards</h1>
+          <a href="https://scores-pzfpg93bqyylpfdpkepvgo.streamlit.app/" target="_blank">
+              <button class="btn btn-primary button-spacing">View Linear Scaled Final Score Dashboard</button>
+          </a>
+          <a href="https://logscores-iixxfoyabyahjz9vo8dcph.streamlit.app/" target="_blank">
+              <button class="btn btn-primary button-spacing">View Log Scaled Final Score Dashboard</button>
+          </a>
       </div>
-      <div class="form-check">
-          <input type="checkbox" class="form-check-input category-filter" value="Economic"> Economic
+
+      <!-- Air Quality Check -->
+      <div class="section-spacing">
+          <h1>Check Air Quality</h1>
+          <form id="airQualityForm" class="form-spacing">
+              <label for="zipCode">Enter ZIP Code:</label>
+              <input type="text" id="zipCode" class="form-control" required />
+              <button type="submit" class="btn btn-primary mt-2">Check Air Quality</button>
+          </form>
+          <div id="result"></div>
       </div>
-      <div class="form-check">
-          <input type="checkbox" class="form-check-input category-filter" value="Political"> Political
+
+      <!-- City Demographics and Economic Data -->
+      <div class="section-spacing">
+          <h2>City Demographics and Economic Data</h2>
+          <div class="form-spacing">
+              <label>Select Year:</label>
+              <select id="yearDropdown" class="form-select mb-3">
+                  <option value="" disabled selected>Select a year</option>
+                  <option value="2018">2018</option>
+                  <option value="2019">2019</option>
+                  <option value="2021">2021</option>
+                  <option value="2022">2022</option>
+              </select>
+          </div>
+          <div class="form-spacing">
+              <label>Select City:</label>
+              <select id="cityDropdown" class="form-select mb-3" disabled>
+                  <option value="" disabled selected>Select a city</option>
+              </select>
+          </div>
+          <div class="form-spacing">
+              <label>Filter by Category:</label>
+              <div class="form-check">
+                  <input type="checkbox" class="form-check-input category-filter" value="Social"> Social
+              </div>
+              <div class="form-check">
+                  <input type="checkbox" class="form-check-input category-filter" value="Economic"> Economic
+              </div>
+              <div class="form-check">
+                  <input type="checkbox" class="form-check-input category-filter" value="Political"> Political
+              </div>
+              <div class="form-check">
+                  <input type="checkbox" class="form-check-input category-filter" value="Environmental"> Environmental
+              </div>
+          </div>
+          <button id="filterBtn" class="btn btn-primary mt-3">Apply Filters</button>
+          <table id="cityMetricsTable" class="table table-bordered table-striped mt-4">
+              <thead id="cityMetricsTableHeader"></thead>
+              <tbody id="cityMetricsTableBody"></tbody>
+          </table>
       </div>
-      <div class="form-check">
-          <input type="checkbox" class="form-check-input category-filter" value="Environmental"> Environmental
+
+      <!-- City Comparison Section -->
+      <div class="section-spacing">
+          <h2>Compare Two Cities</h2>
+          <div class="form-spacing">
+              <label for="csvDropdown">Select Data Type & Year:</label>
+              <select id="csvDropdown" class="form-control mb-3">
+                  <optgroup label="Metrics Tables">
+                      <option value="metrics-2018">Metrics Table - 2018</option>
+                      <option value="metrics-2019">Metrics Table - 2019</option>
+                      <option value="metrics-2021">Metrics Table - 2021</option>
+                      <option value="metrics-2022">Metrics Table - 2022</option>
+                  </optgroup>
+                  <optgroup label="Data Points Tables">
+                      <option value="data-2018">Data Points Table - 2018</option>
+                      <option value="data-2019">Data Points Table - 2019</option>
+                      <option value="data-2021">Data Points Table - 2021</option>
+                      <option value="data-2022">Data Points Table - 2022</option>
+                  </optgroup>
+              </select>
+          </div>
+          <div class="row mb-3">
+              <div class="col-md-6">
+                  <label for="city1Dropdown">Select First City:</label>
+                  <select id="city1Dropdown" class="form-control">
+                      <option value="">Select City 1</option>
+                  </select>
+              </div>
+              <div class="col-md-6">
+                  <label for="city2Dropdown">Select Second City:</label>
+                  <select id="city2Dropdown" class="form-control">
+                      <option value="">Select City 2</option>
+                  </select>
+              </div>
+          </div>
+          <table id="comparisonTable" class="table table-bordered table-striped">
+              <thead id="comparisonTableHeader"></thead>
+              <tbody id="comparisonTableBody"></tbody>
+          </table>
       </div>
-  
-      <button id="filterBtn" class="btn btn-primary mt-3">Apply Filters</button>
-  
-      <table id="cityMetricsTable" class="table table-bordered table-striped mt-4">
-          <thead id="cityMetricsTableHeader"></thead>
-          <tbody id="cityMetricsTableBody"></tbody>
-      </table>
-  </div>
-  
 
-   
-
-   <!-- Table to display the city data for the selected year -->
-   <table id="cityDataForYearTable" class="table table-bordered table-striped">
-     <thead id="cityDataForYearHeader"></thead>
-     <tbody id="cityDataForYearBody"></tbody>
-   </table>
- </div>
-
-     <!-- Search and Compare Cities -->
-   <!-- City Comparison Section -->
-<div class="container">
-  <h2>Compare Two Cities</h2>
-  
-  <label for="csvDropdown">Select Data Type & Year:</label>
-  <select id="csvDropdown" class="form-control mb-3">
-      <!-- Metrics Tables -->
-      <optgroup label="Metrics Tables">
-          <option value="metrics-2018">Metrics Table - 2018</option>
-          <option value="metrics-2019">Metrics Table - 2019</option>
-          <option value="metrics-2021">Metrics Table - 2021</option>
-          <option value="metrics-2022">Metrics Table - 2022</option>
-      </optgroup>
-      <!-- Data Points Tables -->
-      <optgroup label="Data Points Tables">
-          <option value="data-2018">Data Points Table - 2018</option>
-          <option value="data-2019">Data Points Table - 2019</option>
-          <option value="data-2021">Data Points Table - 2021</option>
-          <option value="data-2022">Data Points Table - 2022</option>
-      </optgroup>
-  </select>
-
-  <!-- City Selection -->
-  <div class="row mb-3">
-      <div class="col-md-6">
-          <label for="city1Dropdown">Select First City:</label>
-          <select id="city1Dropdown" class="form-control">
-              <option value="">Select City 1</option>
-          </select>
+      <!-- Future Metrics Comparison -->
+      <div class="section-spacing">
+          <h2>Future Metrics Comparison (2023–2026)</h2>
+          <div class="form-spacing">
+              <label for="futureCity1Dropdown">City 1:</label>
+              <select id="futureCity1Dropdown" class="form-control"></select>
+          </div>
+          <div class="form-spacing">
+              <label for="futureCity2Dropdown">City 2:</label>
+              <select id="futureCity2Dropdown" class="form-control"></select>
+          </div>
+          <table id="futureComparisonTable" class="table table-bordered table-striped">
+              <thead id="futureComparisonTableHeader"></thead>
+              <tbody id="futureComparisonTableBody"></tbody>
+          </table>
       </div>
-      <div class="col-md-6">
-          <label for="city2Dropdown">Select Second City:</label>
-          <select id="city2Dropdown" class="form-control">
-              <option value="">Select City 2</option>
-          </select>
+
+      <!-- City Metrics Trend Section -->
+      <div class="section-spacing">
+          <h2>City Metrics Trend</h2>
+          <div class="form-spacing">
+              <label for="cityTrendDropdown">Select a City:</label>
+              <select id="cityTrendDropdown" class="form-control mb-3">
+                  <option value="">Select City</option>
+              </select>
+          </div>
+          <table id="metricsTable" class="table table-bordered table-striped">
+              <thead id="metricsTableHeader"></thead>
+              <tbody id="metricsTableBody"></tbody>
+          </table>
       </div>
-  </div>
-  <div id="futureComparisonSection">
-    <h2>Future Metrics Comparison (2023–2026)</h2>
-    <label for="futureCity1Dropdown">City 1:</label>
-    <select id="futureCity1Dropdown"></select>
-    <label for="futureCity2Dropdown">City 2:</label>
-    <select id="futureCity2Dropdown"></select>
-    <table id="futureComparisonTable" border="1" cellspacing="0" cellpadding="5">
-      <thead id="futureComparisonTableHeader"></thead>
-      <tbody id="futureComparisonTableBody"></tbody>
-    </table>
-  </div>
-  <!-- Comparison Table -->
-  <table id="comparisonTable" class="table table-bordered table-striped">
-      <thead id="comparisonTableHeader"></thead>
-      <tbody id="comparisonTableBody"></tbody>
-  </table>
-</div>
 
-     <!-- Comparison Table -->
-     <table id="comparisonTable" class="table table-bordered table-striped">
-       <thead id="comparisonTableHeader"></thead>
-       <tbody id="comparisonTableBody"></tbody>
-     </table>
-   </div>
+      <!-- Custom Reports -->
+      <div class="section-spacing custom-report">
+          <h2 id="customreport">Custom Reports</h2>
+          <p>View the latest custom report below:</p>
+          <div class="embed-responsive">
+              <embed src="products_report.pdf" type="application/pdf" width="100%" height="600px" />
+          </div>
+      </div>
 
-   <!-- City Metrics Trend Section -->
-<div class="container">
-  <h2>City Metrics Trend</h2>
-
-  <!-- Dropdown to select a city -->
-  <label for="cityTrendDropdown">Select a City:</label>
-  <select id="cityTrendDropdown" class="form-control mb-3">
-    <option value="">Select City</option>
-    <!-- Options will be dynamically populated -->
-  </select>
-
-  <!-- Table to display the metrics trend across all years -->
-  <table id="metricsTable" class="table">
-    <thead id="metricsTableHeader"></thead>
-    <tbody id="metricsTableBody"></tbody>
-</table>
-
-<table id="dataPointsTable" class="table">
-    <thead id="dataPointsTableHeader"></thead>
-    <tbody id="dataPointsTableBody"></tbody>
-</table>
-
-</div>
-
-<div class="container product-container mt-5">
-  <h2 id= "customreport">Custom Reports</h2>
-  <p>View the latest custom report below:</p>
-
-  <!-- Embedded PDF to display the full report -->
-  <div class="embed-responsive" style="height: 600px;">
-    <embed src="products_report.pdf" type="application/pdf" width="100%" height="600px" />
-  </div>
-</div>
-    <!-- Dropdown to select CSV -->
-
-    <!-- Table to display the data -->
-    <!-- <table id="csvTable" class="table table-bordered table-striped">
-      <thead id="tableHeader"></thead>
-      <tbody id="tableBody"></tbody>
-    </table> -->
+      <!-- City Insights -->
+      <div class="section-spacing">
+        <h2>City Insights</h2>
+        <div class="table-container">
+            <!-- Dropdowns with Headers -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <h5>Select City for Raw Data</h5>
+                    <select id="citySelect1" class="form-control">
+                        <option value="">Select City 1</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <h5>Select City for Percentage Metrics</h5>
+                    <select id="citySelect2" class="form-control">
+                        <option value="">Select City 2</option>
+                    </select>
+                </div>
+            </div>
+    
+            <!-- Tables Side by Side -->
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Raw Data</h5>
+                    <table id="rawDataTable" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h5>Percentage of Golden City</h5>
+                    <table id="percentageDataTable" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
   </div>
   <script>
    $(document).ready(function () {
@@ -1183,4 +1233,92 @@ body {
       });
     });
     </script>
+   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+   <!-- DataTables JS -->
+   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+   <!-- PapaParse for CSV parsing -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+   <script>
+       $(document).ready(function () {
+    const csvUrl = "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/city_metrics_as_percentages_of_golden_city%20-%20city_metrics_as_percentages_of_golden_city.csv.csv"; // Replace with your CSV URL
+    let rawDataTable, percentageDataTable;
+    let cities = [];
+    let data = [];
+
+    // Fetch and parse CSV data
+    Papa.parse(csvUrl, {
+        download: true,
+        header: true,
+        dynamicTyping: true,
+        complete: function (results) {
+            if (results.errors.length > 0) {
+                console.error("Errors while parsing CSV:", results.errors);
+                return;
+            }
+            data = results.data;
+            cities = data.map(row => row.City).filter(city => city !== "Golden City (Average)");
+            console.log("Cities fetched:", cities); // Debugging: Check if cities are fetched correctly
+
+            // Populate dropdowns
+            populateDropdown("citySelect1", cities);
+            populateDropdown("citySelect2", cities);
+
+            // Initialize DataTables
+            rawDataTable = $("#rawDataTable").DataTable({
+                paging: false,
+                searching: false,
+                info: false,
+                columns: [
+                    { data: "Metric" },
+                    { data: "Value" }
+                ]
+            });
+
+            percentageDataTable = $("#percentageDataTable").DataTable({
+                paging: false,
+                searching: false,
+                info: false,
+                columns: [
+                    { data: "Metric" },
+                    { data: "Percentage" }
+                ]
+            });
+
+            // Add event listeners for dropdowns
+            document.getElementById("citySelect1").addEventListener("change", updateRawDataTable);
+            document.getElementById("citySelect2").addEventListener("change", updatePercentageDataTable);
+        }
+    });
+
+    // Function to populate dropdowns
+    function populateDropdown(dropdownId, options) {
+        const dropdown = document.getElementById(dropdownId);
+        if (!dropdown) {
+            console.error(`Dropdown with ID ${dropdownId} not found!`);
+            return;
+        }
+        dropdown.innerHTML = options.map(city => `<option value="${city}">${city}</option>`).join("");
+    }
+
+    // Function to update raw data table
+    function updateRawDataTable() {
+        const selectedCity = document.getElementById("citySelect1").value;
+        const cityData = data.find(row => row.City === selectedCity);
+        const rawData = Object.entries(cityData)
+            .filter(([key]) => !key.includes("(% of Golden City)")) // Exclude percentage columns
+            .map(([key, value]) => ({ Metric: key, Value: value }));
+        rawDataTable.clear().rows.add(rawData).draw();
+    }
+
+    // Function to update percentage data table
+    function updatePercentageDataTable() {
+        const selectedCity = document.getElementById("citySelect2").value;
+        const cityData = data.find(row => row.City === selectedCity);
+        const percentageData = Object.entries(cityData)
+            .filter(([key]) => key.includes("(% of Golden City)")) // Include only percentage columns
+            .map(([key, value]) => ({ Metric: key.replace(" (% of Golden City)", ""), Percentage: value }));
+        percentageDataTable.clear().rows.add(percentageData).draw();
+    }
+});
+      </script>
     
