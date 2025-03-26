@@ -399,7 +399,20 @@ body {
               <tbody id="comparisonTableBody"></tbody>
           </table>
       </div>
-
+      
+      <div class="section-spacing">
+        <h2>City Metrics Trend</h2>
+        <div class="form-spacing">
+            <label for="cityTrendDropdown">Select a City:</label>
+            <select id="cityTrendDropdown" class="form-control mb-3">
+                <option value="">Select City</option>
+            </select>
+        </div>
+        <table id="metricsTable" class="table table-bordered table-striped">
+            <thead id="metricsTableHeader"></thead>
+            <tbody id="metricsTableBody"></tbody>
+        </table>
+    </div>
       <!-- Future Metrics Comparison -->
       <div class="section-spacing">
           <h2>Metrics Trend Comparison (2023-2026)</h2>
@@ -418,19 +431,7 @@ body {
       </div>
 
       <!-- City Metrics Trend Section -->
-      <div class="section-spacing">
-          <h2>City Metrics Trend</h2>
-          <div class="form-spacing">
-              <label for="cityTrendDropdown">Select a City:</label>
-              <select id="cityTrendDropdown" class="form-control mb-3">
-                  <option value="">Select City</option>
-              </select>
-          </div>
-          <table id="metricsTable" class="table table-bordered table-striped">
-              <thead id="metricsTableHeader"></thead>
-              <tbody id="metricsTableBody"></tbody>
-          </table>
-      </div>
+     
 
       <!-- Custom Reports -->
       <div class="section-spacing custom-report">
@@ -1244,7 +1245,7 @@ body {
    <!-- PapaParse for CSV parsing -->
    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
    <script>
-   $(document).ready(function () {
+  $(document).ready(function () {
     const metricsCsvUrl = "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/city_metrics_as_percentages_of_golden_city%20-%20city_metrics_as_percentages_of_golden_city.csv.csv";
     const expendituresCsvUrl = "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/expenditures%20-%20Sheet1.csv";
 
@@ -1265,12 +1266,11 @@ body {
             }
             metricsData = results.data;
             cities = metricsData.map(row => row.City).filter(city => city !== "Golden City (Average)");
-            console.log("Cities fetched:", cities); // Debugging: Check if cities are fetched correctly
-
+            
             // Populate dropdowns
             populateDropdown("citySelect1", cities);
             populateDropdown("citySelect2", cities);
-            populateDropdown("citySelect3", cities); // New dropdown for Placemaking
+            populateDropdown("citySelect3", cities);
 
             // Initialize DataTables
             rawDataTable = $("#rawDataTable").DataTable({
@@ -1292,6 +1292,10 @@ body {
                     { data: "Percentage" }
                 ]
             });
+
+            // Initialize with default city
+            updateRawDataTable();
+            updatePercentageDataTable();
         }
     });
 
@@ -1306,7 +1310,6 @@ body {
                 return;
             }
             expendituresData = results.data;
-            console.log("Expenditures Data:", expendituresData); // Debugging: Check if expenditures data is fetched
 
             // Initialize Placemaking DataTable
             placemakingTable = $("#placemakingTable").DataTable({
@@ -1320,36 +1323,70 @@ body {
                     { data: "Percentage" }
                 ]
             });
+
+            // Initialize with default city
+            updatePlacemakingTable();
         }
     });
 
     // Function to populate dropdowns
     function populateDropdown(dropdownId, options) {
         const dropdown = document.getElementById(dropdownId);
-        if (!dropdown) {
-            console.error(`Dropdown with ID ${dropdownId} not found!`);
-            return;
-        }
         dropdown.innerHTML = options.map(city => `<option value="${city}">${city}</option>`).join("");
     }
 
-    // Function to update raw data table
+    // Function to update raw data table with guaranteed row order
     function updateRawDataTable() {
         const selectedCity = document.getElementById("citySelect1").value;
         const cityData = metricsData.find(row => row.City === selectedCity);
-        const rawData = Object.entries(cityData)
-            .filter(([key]) => !key.includes("(% of Golden City)")) // Exclude percentage columns
-            .map(([key, value]) => ({ Metric: key, Value: value }));
-        rawDataTable.clear().rows.add(rawData).draw();
+        
+        if (!cityData) {
+            console.error("City data not found!");
+            return;
+        }
+
+        // 1. Create array with the two required metrics first
+        const orderedData = [
+            { Metric: "Expenditure per Person", Value: cityData["Expenditure per Person"] || "N/A" },
+            { Metric: "Revenue per Person", Value: cityData["Revenue per Person"] || "N/A" }
+        ];
+
+        // 2. Get all other metrics (excluding City, percentage columns, and the two we already added)
+        const otherMetrics = Object.keys(cityData)
+            .filter(key => 
+                key !== "City" && 
+                !key.includes("(% of Golden City)") && 
+                key !== "Expenditure per Person" && 
+                key !== "Revenue per Person"
+            )
+            .sort() // Sort alphabetically
+            .map(key => ({ Metric: key, Value: cityData[key] }));
+
+        // 3. Combine them (priority metrics first)
+        const finalData = [...orderedData, ...otherMetrics];
+        
+        // 4. Update the table
+        rawDataTable.clear().rows.add(finalData).draw();
     }
 
     // Function to update percentage data table
     function updatePercentageDataTable() {
         const selectedCity = document.getElementById("citySelect2").value;
         const cityData = metricsData.find(row => row.City === selectedCity);
+        
+        if (!cityData) {
+            console.error("City data not found!");
+            return;
+        }
+
         const percentageData = Object.entries(cityData)
-            .filter(([key]) => key.includes("(% of Golden City)")) // Include only percentage columns
-            .map(([key, value]) => ({ Metric: key.replace(" (% of Golden City)", ""), Percentage: value }));
+            .filter(([key]) => key.includes("(% of Golden City)"))
+            .map(([key, value]) => ({ 
+                Metric: key.replace(" (% of Golden City)", ""), 
+                Percentage: value 
+            }))
+            .sort((a, b) => a.Metric.localeCompare(b.Metric));
+
         percentageDataTable.clear().rows.add(percentageData).draw();
     }
 
@@ -1364,7 +1401,12 @@ body {
             return;
         }
 
-        const expendituresColumns = [
+        const placemakingMetrics = [
+            "Public Safety per Person",
+            "Public Works per Person",
+            "Parks & Rec. per Person",
+            "Comm. & Econ. Dev. per Person",
+            "Public Health per Person",
             "Public Safety",
             "Public Works",
             "Parks & Rec.",
@@ -1372,15 +1414,18 @@ body {
             "Public Health"
         ];
 
-        const placemakingData = expendituresColumns.map(column => {
-            const goldenCityValue = goldenCityData[column];
-            const selectedCityValue = selectedCityData[column];
-            const percentage = ((selectedCityValue / goldenCityValue) * 100).toFixed(2); // Calculate percentage
+        const placemakingData = placemakingMetrics.map(metric => {
+            const goldenCityValue = goldenCityData[metric];
+            const selectedCityValue = selectedCityData[metric];
+            const percentage = goldenCityValue !== 0 ? 
+                ((selectedCityValue / goldenCityValue) * 100).toFixed(2) : 
+                "N/A";
+            
             return {
-                Metric: column,
+                Metric: metric,
                 GoldenCityValue: goldenCityValue,
                 SelectedCityValue: selectedCityValue,
-                Percentage: `${percentage}%`
+                Percentage: percentage !== "N/A" ? `${percentage}%` : "N/A"
             };
         });
 
@@ -1390,7 +1435,7 @@ body {
     // Add event listeners for dropdowns
     document.getElementById("citySelect1").addEventListener("change", updateRawDataTable);
     document.getElementById("citySelect2").addEventListener("change", updatePercentageDataTable);
-    document.getElementById("citySelect3").addEventListener("change", updatePlacemakingTable); // New event listener
+    document.getElementById("citySelect3").addEventListener("change", updatePlacemakingTable);
 });
       </script>
     
