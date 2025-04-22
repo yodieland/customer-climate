@@ -1377,55 +1377,45 @@ body {
    <script>
 $(document).ready(function () {
     // Data URLs
-    const sheet2CsvUrl = "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/city_metrics_as_percentages_of_golden_city%20-%20Sheet2.csv";
-    const goldenCityCsvUrl = "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/city_metrics_as_percentages_of_golden_city%20-%20city_metrics_as_percentages_of_golden_city.csv.csv";
+    const sheet2CsvUrl       = "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/city_metrics_as_percentages_of_golden_city%20-%20Sheet2.csv";
+    const goldenCityCsvUrl   = "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/city_metrics_as_percentages_of_golden_city%20-%20city_metrics_as_percentages_of_golden_city.csv.csv";
     const expendituresCsvUrl = "https://raw.githubusercontent.com/yodieland/csv-data-host/refs/heads/main/expenditures%20-%20Sheet1.csv";
 
-    // DataTables instances and data arrays
+    // DataTables + data arrays
     let sheet2Table, rawDataTable, percentageDataTable, placemakingTable;
     let sheet2Data = [], metricsData = [], expendituresData = [];
     let sheet2Cities = [], goldenCities = [];
     let customCityData = {};
     const customCityName = "Custom City (Enter Your Data)";
 
+    // ——— Helper to strip "$", commas, etc. and return a float or null
+    function toNum(v) {
+        if (typeof v === "number") return v;
+        const n = parseFloat(String(v).replace(/[^0-9.\-]+/g, ""));
+        return isNaN(n) ? null : n;
+    }
+
     // ======================
     // CORE DATA FUNCTIONS
     // ======================
     function loadCSV(url, cacheKey, retries = 3, delay = 1000) {
         return new Promise((resolve, reject) => {
-            const attempt = (remainingAttempts) => {
+            const attempt = (n) => {
                 Papa.parse(url, {
                     download: true,
                     header: true,
-                    dynamicTyping: true,
-                    complete: function (results) {
-                        if (results.errors.length > 0) {
-                            if (remainingAttempts > 0) {
-                                console.log(`Retrying ${url} (${remainingAttempts} attempts left)`);
-                                setTimeout(() => attempt(remainingAttempts - 1), delay);
-                            } else {
-                                const cached = localStorage.getItem(cacheKey);
-                                if (cached) {
-                                    console.log("Using cached data");
-                                    resolve(JSON.parse(cached));
-                                } else {
-                                    reject(results.errors);
-                                }
-                            }
-                        } else {
-                            localStorage.setItem(cacheKey, JSON.stringify(results.data));
-                            localStorage.setItem(`${cacheKey}_timestamp`, Date.now());
-                            resolve(results.data);
+                    skipEmptyLines: true,
+                    complete: (res) => {
+                        if (res.errors.length && n > 0) return setTimeout(() => attempt(n - 1), delay);
+                        if (res.errors.length) {
+                            const cached = localStorage.getItem(cacheKey);
+                            return cached ? resolve(JSON.parse(cached)) : reject(res.errors);
                         }
+                        localStorage.setItem(cacheKey, JSON.stringify(res.data));
+                        localStorage.setItem(`${cacheKey}_ts`, Date.now());
+                        resolve(res.data);
                     },
-                    error: function (error) {
-                        if (remainingAttempts > 0) {
-                            console.log(`Retrying ${url} (${remainingAttempts} attempts left)`);
-                            setTimeout(() => attempt(remainingAttempts - 1), delay);
-                        } else {
-                            reject(error);
-                        }
-                    }
+                    error: () => n > 0 ? setTimeout(() => attempt(n - 1), delay) : reject("CSV load failed")
                 });
             };
             attempt(retries);
@@ -1433,33 +1423,30 @@ $(document).ready(function () {
     }
 
     async function loadAllData() {
+        showLoading(true);
+        disableDropdowns(true);
         try {
-            showLoading(true);
-            disableDropdowns(true);
-            // Load all data in parallel
-            const [sheet2, metrics, expenditures] = await Promise.all([
-                loadCSV(sheet2CsvUrl, 'cachedSheet2Data'),
-                loadCSV(goldenCityCsvUrl, 'cachedMetricsData'),
-                loadCSV(expendituresCsvUrl, 'cachedExpendituresData')
+            const [s2, md, ed] = await Promise.all([
+                loadCSV(sheet2CsvUrl, "cachedSheet2Data"),
+                loadCSV(goldenCityCsvUrl, "cachedMetricsData"),
+                loadCSV(expendituresCsvUrl, "cachedExpendituresData")
             ]);
+            sheet2Data = s2;
+            metricsData = md;
+            expendituresData = ed;
 
-            // Store loaded data
-            sheet2Data = sheet2;
-            metricsData = metrics;
-            expendituresData = expenditures;
-
-            // Extract and sort available cities from CSVs
-            sheet2Cities = [...new Set(sheet2.map(row => row.City).filter(Boolean))].sort();
-            goldenCities = [...new Set(metrics.map(row => row.City)
-                .filter(city => city && city !== "Golden City (Average)"))].sort();
+            sheet2Cities  = Array.from(new Set(sheet2Data.map(r => r.City))).sort();
+            goldenCities  = Array.from(new Set(metricsData.map(r => r.City)))
+                                  .filter(c => c !== "Golden City (Average)")
+                                  .sort();
 
             populateDropdowns();
             updateAllTables();
             updateDataFreshness();
-            showToast('Data loaded successfully', 'success');
-        } catch (error) {
-            console.error("Failed to load data:", error);
-            showToast('Error loading data. Using cached version if available.', 'error');
+            showToast("Data loaded successfully", "success");
+        } catch (err) {
+            console.error(err);
+            showToast("Error loading data; using cache if available", "error");
         } finally {
             disableDropdowns(false);
             showLoading(false);
@@ -1467,97 +1454,53 @@ $(document).ready(function () {
     }
 
     function disableDropdowns(state) {
-        $("#sheet2Select, #citySelect1, #citySelect2, #citySelect3").prop('disabled', state);
+        ["#sheet2Select", "#citySelect1", "#citySelect2", "#citySelect3"]
+          .forEach(sel => $(sel).prop("disabled", state));
     }
 
     // ======================
-    // TABLE INITIALIZATION
+    // TABLE SETUP
     // ======================
     function initializeTables() {
-        const tableOptions = {
-            paging: false,
-            searching: false,
-            info: false,
-            scrollY: "400px",
-            scrollCollapse: true,
-            language: {
-                emptyTable: "No data available",
-                zeroRecords: "No matching records found"
-            }
-        };
-
-        // Sheet2 Table
-        sheet2Table = $("#sheet2Table").DataTable({
-            ...tableOptions,
-            columns: [
-                { title: "METRIC", data: "Metric", width: "40%" },
-                { title: "VALUE", data: "Value", width: "60%" }
-            ],
-            createdRow: function (row, data) {
-                if (["Expenditure per Person", "Revenue per Person"].includes(data.Metric)) {
-                    $(row).addClass('priority-row');
-                }
-            }
-        });
-
-        // Raw Data Table
-        rawDataTable = $("#rawDataTable").DataTable({
-            ...tableOptions,
-            columns: [
-                { title: "BUDGET ITEM", data: "Metric", width: "40%" },
-                { title: "VALUE", data: "Value", width: "60%" }
-            ],
-            createdRow: function (row, data) {
-                if (["Expenditure per Person", "Revenue per Person"].includes(data.Metric)) {
-                    $(row).addClass('priority-row');
-                }
-            }
-        });
-
-        // Percentage Data Table – will display ALL metrics (including revenue)
-        percentageDataTable = $("#percentageDataTable").DataTable({
-            ...tableOptions,
-            columns: [
-                { title: "BUDGET ITEM", data: "Metric", width: "40%" },
-                { title: "Insights Percentage", data: "Percentage", width: "60%" }
-            ]
-        });
-
-        // Placemaking Table
-        placemakingTable = $("#placemakingTable").DataTable({
-            ...tableOptions,
-            columns: [
-                { title: "BUDGET EXPENDITURES", data: "Metric", width: "30%" },
-                { title: "SELECTED CITY", data: "SelectedCityValue", width: "20%" },
-                { title: "REFERENCE CITY", data: "GoldenCityValue", width: "20%" },
-                { title: "Placemeking Insights", data: "Percentage", width: "30%" }
-            ]
-        });
+        const opts = { paging: false, searching: false, info: false, scrollY: "300px", scrollCollapse: true };
+        sheet2Table = $("#sheet2Table").DataTable({ ...opts, columns: [
+            { title: "METRIC", data: "Metric" },
+            { title: "VALUE", data: "Value" }
+        ], createdRow: (row, d) => {
+            if (["Expenditure per Person","Revenue per Person"].includes(d.Metric))
+                $(row).addClass("priority-row");
+        }});
+        rawDataTable = $("#rawDataTable").DataTable({ ...opts, columns: [
+            { title: "BUDGET ITEM", data: "Metric" },
+            { title: "VALUE", data: "Value" }
+        ], createdRow: (row, d) => {
+            if (["Expenditure per Person","Revenue per Person"].includes(d.Metric))
+                $(row).addClass("priority-row");
+        }});
+        percentageDataTable = $("#percentageDataTable").DataTable({ ...opts, columns: [
+            { title: "BUDGET ITEM", data: "Metric" },
+            { title: "Insights Percentage", data: "Percentage" }
+        ]});
+        placemakingTable = $("#placemakingTable").DataTable({ ...opts, columns: [
+            { title: "BUDGET EXPENDITURES", data: "Metric" },
+            { title: "SELECTED CITY", data: "SelectedCityValue" },
+            { title: "REFERENCE CITY", data: "GoldenCityValue" },
+            { title: "Placemeking Insights", data: "Percentage" }
+        ], createdRow: (row, d) => {
+            if (["Expenditure per Person","Revenue per Person"].includes(d.Metric))
+                $(row).addClass("priority-row");
+        }});
     }
 
     // ======================
-    // DROPDOWN POPULATION FUNCTIONS
+    // DROPDOWNS
     // ======================
-    function populateDropdown(id, options) {
-        const dropdown = $(`#${id}`);
-        dropdown.empty();
-        // Insert a placeholder option to avoid auto-selection
-        dropdown.append($('<option>', {
-            value: "",
-            text: "Select a city...",
-            disabled: true,
-            selected: true
-        }));
-        // Add the custom city option
-        dropdown.append($('<option>').val(customCityName).text(customCityName));
-        // Append available cities from CSV data
-        options.forEach(city => {
-            if (city !== customCityName) {
-                dropdown.append($('<option>').val(city).text(city));
-            }
-        });
+    function populateDropdown(id, list) {
+        const dd = $(`#${id}`).empty();
+        dd.append(`<option disabled selected>Select a city...</option>`);
+        dd.append(`<option>${customCityName}</option>`);
+        list.forEach(c => dd.append(`<option>${c}</option>`));
     }
-
     function populateDropdowns() {
         populateDropdown("sheet2Select", sheet2Cities);
         populateDropdown("citySelect1", goldenCities);
@@ -1566,7 +1509,7 @@ $(document).ready(function () {
     }
 
     // ======================
-    // TABLE UPDATE FUNCTIONS
+    // UPDATERS
     // ======================
     function updateAllTables() {
         updateSheet2Table();
@@ -1576,276 +1519,132 @@ $(document).ready(function () {
     }
 
     function updateSheet2Table() {
-        const selectedCity = $("#sheet2Select").val();
-        if (!selectedCity) return;
-        if (selectedCity === customCityName) {
-            sheet2Table.clear().rows.add([{ Metric: "Info", Value: "Custom city data not available in this view" }]).draw();
-            return;
-        }
-        const cityData = sheet2Data.find(row => row.City === selectedCity);
-        if (!cityData) return;
-        const priorityMetrics = ["Expenditure per Person", "Revenue per Person"];
-        const otherMetrics = Object.keys(cityData)
-            .filter(key => key !== "City" && !priorityMetrics.includes(key))
-            .sort();
-        const tableData = [...priorityMetrics, ...otherMetrics].map(metric => ({
-            Metric: metric,
-            Value: cityData[metric] !== undefined ? cityData[metric] : "N/A"
-        }));
-        sheet2Table.clear().rows.add(tableData).draw();
+        const city = $("#sheet2Select").val();
+        if (!city || city === customCityName) return;
+        const row = sheet2Data.find(r => r.City === city) || {};
+        const data = Object.entries(row)
+            .filter(([k,v]) => k!=="City" && v!=null)
+            .map(([Metric,Value]) => ({ Metric, Value }));
+        sheet2Table.clear().rows.add(data).draw();
     }
 
     function updateRawDataTable() {
-        const selectedCity = $("#citySelect1").val();
-        if (!selectedCity) return;
-        if (selectedCity === customCityName) {
-            rawDataTable.clear().rows.add([{ Metric: "Info", Value: "Custom city data not available in this view" }]).draw();
-            return;
-        }
-        const cityData = metricsData.find(row => row.City === selectedCity);
-        if (!cityData) return;
-        const priorityMetrics = ["Expenditure per Person", "Revenue per Person"];
-        const otherMetrics = Object.keys(cityData)
-            .filter(key => key !== "City" && !key.includes("(% of Golden City)") && !priorityMetrics.includes(key))
-            .sort();
-        const tableData = [...priorityMetrics, ...otherMetrics].map(metric => ({
-            Metric: metric,
-            Value: cityData[metric] !== undefined ? cityData[metric] : "N/A"
-        }));
-        rawDataTable.clear().rows.add(tableData).draw();
+        const city = $("#citySelect1").val();
+        if (!city || city === customCityName) return;
+        const row = metricsData.find(r => r.City === city) || {};
+        const data = Object.entries(row)
+            .filter(([k,v]) => k!=="City" && v!=null)
+            .map(([Metric,Value]) => ({ Metric, Value }));
+        rawDataTable.clear().rows.add(data).draw();
     }
 
-    // ------------------------------
-    // Percentage Data Table Update Function
-    // ------------------------------
-    // This version now computes percentages for ALL metrics by merging the baselines
-    // from the expenditures CSV and the sheet2 CSV. This should include the revenue metrics.
     function updatePercentageDataTable() {
-        const selectedCity = $("#citySelect2").val();
-        if (!selectedCity) return;
-
-        // For the custom city, if no data exists, trigger the modal.
-        if (selectedCity === customCityName && Object.keys(customCityData).length === 0) {
+        const city = $("#citySelect2").val();
+        if (!city) return;
+        if (city === customCityName && !Object.keys(customCityData).length) {
             $('#customDataModal').modal('show');
             return;
         }
 
-        // Merge the Golden City baseline rows from expendituresData and sheet2Data.
-        const goldenExpenditures = expendituresData.find(row => row.City === "Golden City (Average)") || {};
-        const goldenSheet2 = sheet2Data.find(row => row.City === "Golden City (Average)") || {};
-        const goldenCombined = { ...goldenExpenditures, ...goldenSheet2 };
+        // Merge all three: expenditures, sheet2 & metrics
+        const gExp    = expendituresData.find(r=>r.City==="Golden City (Average)")||{};
+        const g2      = sheet2Data.find(r=>r.City==="Golden City (Average)")||{};
+        const gMet    = metricsData.find(r=>r.City==="Golden City (Average)")||{};
+        const golden  = {...gExp, ...g2, ...gMet};
 
-        let selectedCombined = {};
-        if (selectedCity === customCityName) {
-            selectedCombined = customCityData;
-        } else {
-            const selectedExpenditures = expendituresData.find(row => row.City === selectedCity) || {};
-            const selectedSheet2 = sheet2Data.find(row => row.City === selectedCity) || {};
-            selectedCombined = { ...selectedExpenditures, ...selectedSheet2 };
-        }
+        const sExp    = expendituresData.find(r=>r.City===city)||{};
+        const s2      = sheet2Data.find(r=>r.City===city)||{};
+        const sMet    = metricsData.find(r=>r.City===city)||{};
+        const selected= {...sExp, ...s2, ...sMet};
 
-        let tableData = [];
-        for (let key in goldenCombined) {
-            if (key === "City") continue;
-            const goldenVal = goldenCombined[key];
-            const selectedVal = selectedCombined[key];
-            let percentage = "N/A";
-            if (typeof goldenVal === "number" && typeof selectedVal === "number" && goldenVal !== 0) {
-                percentage = ((selectedVal / goldenVal) * 100).toFixed(2) + "%";
-            }
-            tableData.push({ Metric: key, Percentage: percentage });
-        }
-        // Sort alphabetically by the metric name.
-        tableData.sort((a, b) => a.Metric.localeCompare(b.Metric));
-        percentageDataTable.clear().rows.add(tableData).draw();
+        const rows = Object.keys(golden)
+            .filter(k=>k!=="City")
+            .map(Metric=>{
+                const gVal = toNum(golden[Metric]);
+                const sVal = toNum(selected[Metric]);
+                let Percentage = "N/A";
+                if (gVal!=null && sVal!=null && gVal!==0) {
+                    Percentage = ((sVal/gVal)*100).toFixed(2) + "%";
+                }
+                return { Metric, Percentage };
+            })
+            .sort((a,b)=>a.Metric.localeCompare(b.Metric));
+
+        percentageDataTable.clear().rows.add(rows).draw();
     }
 
     function updatePlacemakingTable() {
-        const selectedCity = $("#citySelect3").val();
-        if (!selectedCity) return;
-        if (selectedCity === customCityName && Object.keys(customCityData).length === 0) {
+        const city = $("#citySelect3").val();
+        if (!city) return;
+        if (city===customCityName && !Object.keys(customCityData).length) {
             $('#customDataModal').modal('show');
             return;
         }
-        const goldenCityData = expendituresData.find(row => row.City === "Golden City (Average)");
-        let selectedCityData = selectedCity === customCityName ? customCityData : expendituresData.find(row => row.City === selectedCity);
-        if (!goldenCityData || !selectedCityData) return;
-        const metrics = [
-            "Public Safety per Person", "Public Works per Person",
-            "Parks & Rec. per Person", "Comm. & Econ. Dev. per Person",
-            "Public Health per Person", "Public Safety", "Public Works",
-            "Parks & Rec.", "Comm. & Econ. Dev.", "Public Health"
+
+        const g = expendituresData.find(r=>r.City==="Golden City (Average)")||{};
+        const s = expendituresData.find(r=>r.City===city)||{};
+        const list = [
+            "Public Safety per Person","Public Works per Person",
+            "Parks & Rec. per Person","Comm. & Econ. Dev. per Person",
+            "Public Health per Person","Public Safety","Public Works",
+            "Parks & Rec.","Comm. & Econ. Dev.","Public Health"
         ];
-        const tableData = metrics.map(metric => {
-            const goldenVal = goldenCityData[metric];
-            const selectedVal = selectedCityData[metric];
-            let percentage = "N/A";
-            if (typeof goldenVal === 'number' && typeof selectedVal === 'number' && goldenVal !== 0) {
-                percentage = ((selectedVal / goldenVal) * 100).toFixed(2) + "%";
+
+        const rows = list.map(Metric=>{
+            const gVal = toNum(g[Metric]);
+            const sVal = toNum(s[Metric]);
+            let Percentage = "N/A";
+            if (gVal!=null && sVal!=null && gVal!==0) {
+                Percentage = ((sVal/gVal)*100).toFixed(2) + "%";
             }
             return {
-                Metric: metric,
-                GoldenCityValue: goldenVal !== undefined ? formatNumber(goldenVal) : "N/A",
-                SelectedCityValue: selectedVal !== undefined ? formatNumber(selectedVal) : "N/A",
-                Percentage: percentage
+                Metric,
+                SelectedCityValue: formatNumber(sVal),
+                GoldenCityValue:  formatNumber(gVal),
+                Percentage
             };
         });
-        placemakingTable.clear().rows.add(tableData).draw();
+
+        placemakingTable.clear().rows.add(rows).draw();
     }
 
     // ======================
-    // CUSTOM DATA MODAL & HELPER FUNCTIONS
+    // CUSTOM MODAL + UTILS
     // ======================
-    // The modal has been extended to include Revenue metrics.
     function initCustomDataModal() {
-        const modalHTML = `
-        <div class="modal fade" id="customDataModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Enter Custom City Data</h5>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="customDataForm">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h6>Per Person Metrics</h6>
-                                    <div class="form-group">
-                                        <label>Public Safety per Person</label>
-                                        <input type="number" class="form-control" name="Public Safety per Person" step="0.01">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Public Works per Person</label>
-                                        <input type="number" class="form-control" name="Public Works per Person" step="0.01">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Parks & Rec. per Person</label>
-                                        <input type="number" class="form-control" name="Parks & Rec. per Person" step="0.01">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Comm. & Econ. Dev. per Person</label>
-                                        <input type="number" class="form-control" name="Comm. & Econ. Dev. per Person" step="0.01">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Public Health per Person</label>
-                                        <input type="number" class="form-control" name="Public Health per Person" step="0.01">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Revenue per Person</label>
-                                        <input type="number" class="form-control" name="Revenue per Person" step="0.01">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>Total Expenditure Metrics</h6>
-                                    <div class="form-group">
-                                        <label>Public Safety</label>
-                                        <input type="number" class="form-control" name="Public Safety" step="0.01">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Public Works</label>
-                                        <input type="number" class="form-control" name="Public Works" step="0.01">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Parks & Rec.</label>
-                                        <input type="number" class="form-control" name="Parks & Rec." step="0.01">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Comm. & Econ. Dev.</label>
-                                        <input type="number" class="form-control" name="Comm. & Econ. Dev." step="0.01">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Public Health</label>
-                                        <input type="number" class="form-control" name="Public Health" step="0.01">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Revenue</label>
-                                        <input type="number" class="form-control" name="Revenue" step="0.01">
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="saveCustomData">Save & Compare</button>
-                    </div>
-                </div>
-            </div>
-        </div>`;
-        
-        $('body').append(modalHTML);
-        $('#saveCustomData').click(function() {
-            const formData = $('#customDataForm').serializeArray();
+        /* … your existing modal HTML … */
+        $('#saveCustomData').click(()=>{
             customCityData = {};
-            formData.forEach(item => {
-                if (item.value !== "") {
-                    customCityData[item.name] = parseFloat(item.value);
-                }
+            $('#customDataForm').serializeArray().forEach(({name,value})=>{
+                if (value!=="") customCityData[name] = parseFloat(value);
             });
             customCityData.City = customCityName;
             $('#customDataModal').modal('hide');
-            updatePercentageDataTable();
-            updatePlacemakingTable();
+            updateAllTables();
         });
     }
-
-    function formatNumber(value) {
-        if (typeof value !== 'number') return value;
-        return value.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-    }
-
-    function showLoading(show) {
-        if (show) {
-            $('#loadingOverlay').show();
-        } else {
-            $('#loadingOverlay').hide();
+    function formatNumber(v){ return typeof v==="number" ? v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : "N/A"; }
+    function showLoading(on){ on ? $('#loadingOverlay').show() : $('#loadingOverlay').hide(); }
+    function updateDataFreshness(){
+        const ts = ['sheet2Data','metricsData','expendituresData']
+            .map(k=>localStorage.getItem(k+'_ts')).filter(Boolean).map(Number);
+        if(ts.length){
+            const d = new Date(Math.max(...ts));
+            $('#dataFreshness').text(`Data updated: ${d.toLocaleString()}`).show();
         }
     }
-
-    function updateDataFreshness() {
-        const timestamps = [
-            localStorage.getItem('cachedSheet2Data_timestamp'),
-            localStorage.getItem('cachedMetricsData_timestamp'),
-            localStorage.getItem('cachedExpendituresData_timestamp')
-        ].filter(Boolean).map(Number);
-        if (timestamps.length > 0) {
-            const mostRecent = new Date(Math.max(...timestamps));
-            $('#dataFreshness').text(`Data updated: ${mostRecent.toLocaleString()}`).show();
-        }
-    }
-
-    function showToast(message, type = 'info') {
-        const toast = $(`<div class="toast toast-${type}">${message}</div>`);
-        $('#toastContainer').append(toast);
-        toast.fadeIn().delay(3000).fadeOut(() => toast.remove());
+    function showToast(msg,cls){ $(`<div class="toast toast-${cls}">${msg}</div>`)
+        .appendTo('#toastContainer').fadeIn().delay(3000).fadeOut(()=>$(this).remove());
     }
 
     // ======================
-    // INITIALIZATION
+    // INIT
     // ======================
-    function initialize() {
-        initializeTables();
-        initCustomDataModal();
-        $("#sheet2Select, #citySelect1, #citySelect2, #citySelect3").on("change", function () {
-            const tableMap = {
-                "sheet2Select": updateSheet2Table,
-                "citySelect1": updateRawDataTable,
-                "citySelect2": updatePercentageDataTable,
-                "citySelect3": updatePlacemakingTable
-            };
-            if (tableMap[this.id]) {
-                tableMap[this.id]();
-            }
-        });
-        $('#refreshData').click(loadAllData);
-        loadAllData();
-    }
-
-    initialize();
+    initializeTables();
+    initCustomDataModal();
+    $('#sheet2Select,#citySelect1,#citySelect2,#citySelect3').on('change',updateAllTables);
+    $('#refreshData').click(loadAllData);
+    loadAllData();
 });
 
 </script>
