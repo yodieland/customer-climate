@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting…</title>
+  <script>
+    // If the path starts with /customer-climate/app/, reload the React app entrypoint
+    const p = window.location.pathname;
+    if (p.startsWith('/customer-climate/app/')) {
+      window.location.replace('/customer-climate/app/index.html');
+    }
+  </script>
+</head>
+<body></body>
+</html>
