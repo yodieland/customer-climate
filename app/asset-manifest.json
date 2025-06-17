@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/customer-climate/app/static/css/main.59905ba8.css",
+    "main.js": "/customer-climate/app/static/js/main.f52913ff.js",
+    "index.html": "/customer-climate/app/index.html",
+    "main.59905ba8.css.map": "/customer-climate/app/static/css/main.59905ba8.css.map",
+    "main.f52913ff.js.map": "/customer-climate/app/static/js/main.f52913ff.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.59905ba8.css",
+    "static/js/main.f52913ff.js"
+  ]
+}
